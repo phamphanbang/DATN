@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('tests', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('template_id')->constrained()->onDelete('cascade');
+            $table->foreignId('comment_set_id')->constrained(table: 'comment_sets');
             $table->string('name')->unique();
-            $table->string('email')->unique();
-            $table->enum('role', ['user', 'admin', 'superadmin']);
-            $table->string('avatar');
+            $table->integer('total_view');
+            $table->enum('status', ['active', 'disable']);
             $table->string('panel');
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('tests');
     }
 };
