@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('tests', function (Blueprint $table) {
             $table->id();
             $table->foreignId('template_id')->constrained()->onDelete('cascade');
-            $table->foreignId('comment_set_id')->constrained(table: 'comment_sets');
             $table->string('name')->unique();
             $table->integer('total_view');
             $table->enum('status', ['active', 'disable']);

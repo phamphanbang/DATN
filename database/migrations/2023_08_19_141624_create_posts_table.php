@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('comment_set_id')->constrained(table:'comment_sets');
             $table->string('name')->unique();
             $table->text('post');
             $table->string('panel');
