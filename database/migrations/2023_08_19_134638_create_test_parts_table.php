@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('test_parts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('test_id')->constrained()->onDelete('cascade');
+            $table->integer('total_questions');
             $table->integer('order_in_test');
             $table->enum('part_type', ['reading', 'listening']);
             $table->boolean('has_group_question');
