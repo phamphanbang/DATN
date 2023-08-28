@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class History extends Model
 {
@@ -21,8 +22,13 @@ class History extends Model
         return $this->belongsTo(Test::class, 'test_id');
     }
 
-    public function history_answers(): HasMany
+    public function parts(): HasMany
     {
-        return $this->hasMany(HistoryAnswer::class, 'history_id');
+        return $this->hasMany(HistoryPart::class, 'history_id');
+    }
+
+    public function answers(): HasManyThrough
+    {
+        return $this->hasManyThrough(HistoryAnswer::class, HistoryPart::class, 'history_id', 'part_id');
     }
 }

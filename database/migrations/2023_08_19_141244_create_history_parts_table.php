@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tests', function (Blueprint $table) {
+        Schema::create('history_parts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('template_id')->constrained()->onDelete('cascade');
-            $table->string('name')->unique();
-            $table->integer('total_views');
-            $table->enum('status', ['active', 'disable']);
-            $table->string('panel');
+            $table->foreignId('history_id')->constrained(table: 'histories')->onDelete('cascade');
+            $table->foreignId('part_id')->constrained(table: 'test_parts')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tests');
+        Schema::dropIfExists('history_parts');
     }
 };

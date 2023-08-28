@@ -17,11 +17,11 @@ class TemplateFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => 'Factory template',
+            'name' => fake()->name(),
             'description' => 'This is a template generate by factory',
             'duration' => '120',
-            'total_parts' => 7,
-            'total_questions' => 200,
+            'total_parts' => 4,
+            'total_questions' => 40,
             'total_score' => 990,
             'status' => config('enum.template_status.ACTIVE')
         ];

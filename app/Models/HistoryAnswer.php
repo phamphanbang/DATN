@@ -12,9 +12,9 @@ class HistoryAnswer extends Model
 
     protected $table = 'history_answers';
 
-    public function history(): BelongsTo
+    public function part(): BelongsTo
     {
-        return $this->belongsTo(History::class, 'history_id');
+        return $this->belongsTo(HistoryPart::class, 'part_id');
     }
 
     public function answer(): BelongsTo

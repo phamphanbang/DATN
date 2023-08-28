@@ -26,4 +26,53 @@ class TemplatePartFactory extends Factory
             'has_group_question' => false
         ];
     }
+
+    public function part_1()
+    {
+        return $this->state(function () {
+            return [
+                'order_in_test' => 1,
+                'total_questions' => 10,
+                'part_type' => config('enum.part_type.LISTENING'),
+                'has_group_question' => false
+            ];
+        });
+    }
+
+    public function part_2()
+    {
+        return $this->state(function () {
+            return [
+                'order_in_test' => 2,
+                'total_questions' => 10,
+                'part_type' => config('enum.part_type.LISTENING'),
+                'has_group_question' => true
+            ];
+        });
+    }
+
+    public function part_3()
+    {
+        return $this->state(function () {
+            return [
+                'order_in_test' => 3,
+                'total_questions' => 10,
+                'part_type' => config('enum.part_type.READING'),
+                'has_group_question' => false
+            ];
+        });
+    }
+
+    public function part_4()
+    {
+        return $this->state(function () {
+            return [
+                'order_in_test' => 4,
+                'total_questions' => 10,
+                'part_type' => config('enum.part_type.READING'),
+                'has_group_question' => true
+            ];
+        });
+    }
+
 }

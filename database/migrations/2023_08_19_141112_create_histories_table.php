@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('test_id')->constrained()->onDelete('cascade');
             $table->string('duration');
+            $table->enum('test_type', ['fulltest', 'practice']);
             $table->integer('right_questions');
             $table->integer('total_questions');
             $table->integer('score');

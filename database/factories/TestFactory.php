@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Template;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,6 +19,7 @@ class TestFactory extends Factory
     {
         return [
             'name' => fake()->name(),
+            'template_id' => Template::all()->random(1)->first()->id,
             'total_views' => fake()->numberBetween(1,100),
             'status' => config('enum.test_status.ACTIVE'),
             'panel' => 'default'
