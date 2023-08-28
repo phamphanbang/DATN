@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -26,5 +27,22 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $e)
+    {
+        $message = $e->getMessage();
+        $statusCode = $e->getCode();
+        switch (true) {
+            case $e instanceof UserNotFoundException:
+                $message = __('exceptions.authenFail');
+                $statusCode = Response::HTTP_UNAUTHORIZED;
+                break;
+            case $e instanceof UserNeedLoginException:
+                $message = __('exceptions.needLogin');
+                $statusCode = Response::HTTP_UNAUTHORIZED;
+                break;
+        }
+        return response()->error($message, $statusCode);
     }
 }
