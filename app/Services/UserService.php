@@ -1,0 +1,104 @@
+<?php
+
+namespace App\Services;
+
+use App\Repositories\UserRepository;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+
+class UserService
+{
+    private $userRepository;
+
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
+    public function index($request)
+    {
+        $page = $request->page ? $request->page : config('constant.DEFAULT_PAGE');
+        $totalUser = $this->userRepository->countAllUser();
+        $userPerPage = config('constant.USER_PER_PAGE');
+        $totalPage = ceil($totalUser / $userPerPage);
+        $checkPage = $page > $totalPage ? $totalPage : $page;
+        $offset = ($checkPage - 1) * $userPerPage;
+
+        $data = $this->userRepository->index($request, $offset, $userPerPage);
+
+        return $data;
+    }
+
+    public function show($id)
+    {
+        $user = $this->userRepository->show($id);
+        $data = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
+            'avatar' => $user->avatar,
+            'panel' => $user->panel
+        ];
+
+        return $data;
+    }
+
+    public function store($request)
+    {
+        $data = [];
+        $data['name'] = $request->name;
+        $data['email'] = $request->email;
+        $data['role'] = $request->role;
+        $data['password'] = Hash::make($request->password);
+        $data['avatar'] = 'defaultAvatar.png';
+        $data['panel'] = 'defaultPanel.png';
+        $keys = ['avatar', 'panel'];
+        foreach ($keys as $key) {
+            if ($request->hasFile($key)) {
+                $file = $request->file($key);
+                $extension = $file->getClientOriginalExtension();
+                $fileName = $data['name'] . '_' . $key . '.' . $extension;
+                $file->storeAs('users', $fileName);
+
+                $data[$key] = $fileName;
+            }
+        }
+
+        return $this->userRepository->store($data);
+    }
+
+    public function update($id, $request)
+    {
+        $data = [];
+        $data['name'] = $request->name;
+        $data['email'] = $request->email;
+        $data['password'] = Hash::make($request->password);
+        $data['avatar'] = $request->avatar;
+        $data['panel'] = $request->panel;
+        $keys = ['avatar', 'panel'];
+        foreach ($keys as $key) {
+            if ($request->hasFile($key)) {
+                $file = $request->file($key);
+                $extension = $file->getClientOriginalExtension();
+                $fileName = $data['name'] . '_' . $key . '.' . $extension;
+                $file->storeAs('users', $fileName);
+
+                $data[$key] = $fileName;
+            }
+        }
+
+        return $this->userRepository->update($id, $request);
+    }
+
+    public function delete($id)
+    {
+        $fileLinks = $this->userRepository->delete($id);
+        foreach ($fileLinks as $file) {
+            if (Storage::exists('users/' . $file) && $file != 'default.png') {
+                Storage::delete('users/' . $file);
+            }
+        }
+        return true;
+    }
+}
