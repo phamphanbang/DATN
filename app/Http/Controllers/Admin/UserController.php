@@ -46,9 +46,9 @@ class UserController extends Controller
         return response()->success(null, Response::HTTP_OK, __('user.update.success'));
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
-        $res = $this->userService->delete($id);
+        $res = $this->userService->destroy($id);
 
         return response()->success(null, Response::HTTP_OK, __('user.delete.success'));
     }

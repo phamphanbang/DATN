@@ -20,6 +20,7 @@ class TemplatePartFactory extends Factory
     public function definition(): array
     {
         return [
+            'name' => fake()->name(),
             'order_in_test' => rand(1,9),
             'total_questions' => 10,
             'part_type' => config('enum.part_type.LISTENING'),
@@ -31,6 +32,7 @@ class TemplatePartFactory extends Factory
     {
         return $this->state(function () {
             return [
+                'name' => 'Part 1',
                 'order_in_test' => 1,
                 'total_questions' => 10,
                 'part_type' => config('enum.part_type.LISTENING'),
@@ -43,6 +45,7 @@ class TemplatePartFactory extends Factory
     {
         return $this->state(function () {
             return [
+                'name' => 'Part 2',
                 'order_in_test' => 2,
                 'total_questions' => 10,
                 'part_type' => config('enum.part_type.LISTENING'),
@@ -55,6 +58,7 @@ class TemplatePartFactory extends Factory
     {
         return $this->state(function () {
             return [
+                'name' => 'Part 3',
                 'order_in_test' => 3,
                 'total_questions' => 10,
                 'part_type' => config('enum.part_type.READING'),
@@ -67,6 +71,7 @@ class TemplatePartFactory extends Factory
     {
         return $this->state(function () {
             return [
+                'name' => 'Part 4',
                 'order_in_test' => 4,
                 'total_questions' => 10,
                 'part_type' => config('enum.part_type.READING'),

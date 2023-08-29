@@ -56,7 +56,7 @@ class UserRepository
         return true;
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
         try {
             $user = $this->user->findOrFail($id);

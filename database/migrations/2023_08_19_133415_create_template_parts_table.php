@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('template_parts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('template_id')->constrained()->onDelete('cascade');
+            $table->string('name');
             $table->integer('order_in_test');
             $table->integer('total_questions');
             $table->enum('part_type', ['reading', 'listening']);
