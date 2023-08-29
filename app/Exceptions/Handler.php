@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Response;
 use Throwable;
@@ -31,9 +32,14 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $e)
     {
+        dd($e);
         $message = $e->getMessage();
         $statusCode = $e->getCode();
         switch (true) {
+            case $e instanceof ModelNotFoundException:
+                $message = $e->getMessage();
+                $statusCode = Response::HTTP_NOT_FOUND;
+                break;
             case $e instanceof UserNotFoundException:
                 $message = __('exceptions.authenFail');
                 $statusCode = Response::HTTP_UNAUTHORIZED;
