@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Services\TemplateService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TemplateCreateRequest;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class TemplateController extends Controller
 {
@@ -30,11 +33,30 @@ class TemplateController extends Controller
         return response()->success($data, Response::HTTP_OK, __('template.show.success'));
     }
 
-    public function store(Request $request)
+    public function store(TemplateCreateRequest $request)
     {
-        $res = $this->templateService->store($request);
+        DB::beginTransaction();
+        try {
+            $res = $this->templateService->store($request);
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+        return response()->success($res, Response::HTTP_OK, __('template.create.success'));
+    }
 
-        return response()->success(null, Response::HTTP_OK, __('template.create.success'));
+    public function update(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $res = $this->templateService->update($id, $request);
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+        return response()->success($res, Response::HTTP_OK, __('template.update.success'));
     }
 
     public function destroy($id)

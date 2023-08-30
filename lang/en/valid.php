@@ -5,7 +5,7 @@ return [
         'name' => [
             'required' => 'Trường này không được bỏ trống',
             'unique' => 'Tên này đã có người sử dụng',
-            'min' => 'Tên cần phải dài hơn 8 ký tự',
+            'min' => 'Tên cần phải dài hơn 4 ký tự',
             'max' => 'Tên cần phải ngắn hơn 50 ký tự'
         ],
         'email' => [

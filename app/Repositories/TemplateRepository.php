@@ -11,7 +11,7 @@ class TemplateRepository
 {
     private $template, $part;
 
-    public function __construct(Template $template , TemplatePart $part)
+    public function __construct(Template $template, TemplatePart $part)
     {
         $this->template = $template;
         $this->part = $part;
@@ -47,14 +47,31 @@ class TemplateRepository
         foreach ($parts as $part) {
             $temp = [];
             $temp['template_id'] = $template_id;
-            $temp['name'] = $part['name'];
             $temp['order_in_test'] = $part['order_in_test'];
             $temp['total_questions'] = $part['total_questions'];
             $temp['has_group_question'] = $part['has_group_question'];
             $this->part->create($temp);
         }
 
-        return true;
+        $res = $template->with('parts')->findOrFail($template_id);
+        return $res;
+    }
+
+    public function update($id, $data, $request)
+    {
+        try {
+            $template = $this->template->findOrFail($id);
+        } catch (Throwable $e) {
+            throw new ModelNotFoundException(__('exceptions.templateNotFound'));
+        }
+        $template->update($data);
+
+        foreach ($request->parts as $part) {
+            $template_part = TemplatePart::findOrFail($part['id']);
+            $template_part->update($part);
+        }
+        $res = $template->with('parts')->findOrFail($id);
+        return $res;
     }
 
     public function destroy($id)
@@ -64,7 +81,7 @@ class TemplateRepository
         } catch (Throwable $e) {
             throw new ModelNotFoundException(__('exceptions.templateNotFound'));
         }
-        
+
         return $template->delete();
     }
 
@@ -72,5 +89,4 @@ class TemplateRepository
     {
         return $this->template->all()->count();
     }
-
 }

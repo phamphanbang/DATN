@@ -8,6 +8,8 @@ use App\Http\Requests\UserUpdateRequest;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class UserController extends Controller
 {
@@ -27,9 +29,16 @@ class UserController extends Controller
 
     public function store(UserCreateRequest $request)
     {
-        $res = $this->userService->store($request);
+        DB::beginTransaction();
+        try {
+            $res = $this->userService->store($request);
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
 
-        return response()->success(null, Response::HTTP_OK, __('user.create.success'));
+        return response()->success($res, Response::HTTP_OK, __('user.create.success'));
     }
 
     public function show($id)
@@ -41,9 +50,16 @@ class UserController extends Controller
 
     public function update(UserUpdateRequest $request, $id)
     {
-        $res = $this->userService->update($id, $request);
+        DB::beginTransaction();
+        try {
+            $res = $this->userService->update($id, $request);
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
 
-        return response()->success(null, Response::HTTP_OK, __('user.update.success'));
+        return response()->success($res, Response::HTTP_OK, __('user.update.success'));
     }
 
     public function destroy($id)

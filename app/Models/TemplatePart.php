@@ -11,7 +11,6 @@ class TemplatePart extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
         'order_in_test',
         'total_questions',
         'has_group_question',

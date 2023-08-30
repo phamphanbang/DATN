@@ -46,8 +46,21 @@ class TemplateService
         $template['total_score'] = $request->total_score;
         $template['status'] = $request->status;
 
-        $res = $this->templateRepository->store($template, $parts);
-        return $res;
+        return $this->templateRepository->store($template, $parts);
+    }
+
+    public function update($id, $request)
+    {
+        $template = [];
+        $template['name'] = $request->name;
+        $template['duration'] = $request->duration;
+        $template['description'] = $request->description;
+        $template['total_parts'] = $request->total_parts;
+        $template['total_questions'] = $request->total_questions;
+        $template['total_score'] = $request->total_score;
+        $template['status'] = $request->status;
+
+        return $this->templateRepository->update($id, $template, $request);
     }
 
     public function destroy($id)
