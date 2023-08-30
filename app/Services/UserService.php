@@ -91,9 +91,9 @@ class UserService
         return $this->userRepository->update($id, $request);
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
-        $fileLinks = $this->userRepository->delete($id);
+        $fileLinks = $this->userRepository->destroy($id);
         foreach ($fileLinks as $file) {
             if (Storage::exists('users/' . $file) && $file != 'default.png') {
                 Storage::delete('users/' . $file);

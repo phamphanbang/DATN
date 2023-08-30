@@ -3,6 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Response;
 
 class UserUpdateRequest extends FormRequest
 {
@@ -22,7 +25,7 @@ class UserUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|max:50|min:8|unique:users,name' . request('name'),
+            'name' => 'required|max:50|min:8|unique:users,name,' . request('name'),
             'email' => 'required|email|unique:users,email' . request('email'),
             'password' => 'required|string|max:20|min:8',
             'avatar' => 'nullable|image',
@@ -48,5 +51,10 @@ class UserUpdateRequest extends FormRequest
             'avatar.image' => __('valid.user.avatar.image'),
             'panel.image' => __('valid.user.panel.image')
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->error($validator->errors(), Response::HTTP_BAD_REQUEST));
     }
 }

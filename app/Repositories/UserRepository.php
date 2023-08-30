@@ -42,7 +42,8 @@ class UserRepository
 
     public function store($data)
     {
-        return $this->user->create($data);
+        $user_id = $this->user->create($data)->id;
+        return $this->user->findOrFail($user_id);
     }
 
     public function update($id, $data)
@@ -53,10 +54,10 @@ class UserRepository
             throw new ModelNotFoundException(__('exceptions.userNotFound'));
         }
         $user->update($data);
-        return true;
+        return $this->user->findOrFail($id);
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
         try {
             $user = $this->user->findOrFail($id);
