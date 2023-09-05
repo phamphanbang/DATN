@@ -8,20 +8,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class TestAnswer extends Model
+class ExamAnswer extends Model
 {
     use HasFactory;
 
-    protected $table = 'test_answers';
+    protected $table = 'exam_answers';
 
     public function question(): BelongsTo
     {
-        return $this->belongsTo(TestQuestion::class, 'question_id')->orderBy('order_in_question');
-    }
-
-    public function right_answer(): HasOne
-    {
-        return $this->hasOne(TestPart::class, 'answer_id');
+        return $this->belongsTo(ExamQuestion::class, 'question_id')->orderBy('order_in_question');
     }
 
     public function history_answers(): HasMany

@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('test_answers', function (Blueprint $table) {
+        Schema::create('exams', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('question_id')->constrained(table: 'test_questions')->onDelete('cascade');
-            $table->integer('order_in_question');
-            $table->string('answer');
+            $table->foreignId('template_id')->constrained()->onDelete('cascade');
+            $table->string('name')->unique();
+            $table->integer('total_views');
+            $table->enum('status', ['active', 'disable']);
+            $table->string('audio')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('test_answers');
+        Schema::dropIfExists('exams');
     }
 };

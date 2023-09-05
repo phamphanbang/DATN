@@ -2,15 +2,15 @@
 
 namespace Database\Factories;
 
-use App\Models\TestAnswer;
+use App\Models\ExamAnswer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TestAnswer>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ExamAnswer>
  */
-class TestAnswerFactory extends Factory
+class ExamAnswerFactory extends Factory
 {
-    protected $model = TestAnswer::class;
+    protected $model = ExamAnswer::class;
     /**
      * Define the model's default state.
      *

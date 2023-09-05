@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-class Test extends Model
+class Exam extends Model
 {
     use HasFactory;
 
@@ -25,17 +25,17 @@ class Test extends Model
 
     public function parts(): HasMany
     {
-        return $this->hasMany(TestPart::class, 'test_id');
+        return $this->hasMany(ExamPart::class, 'exam_id');
     }
 
     public function questions(): HasManyThrough
     {
-        return $this->hasManyThrough(TestQuestion::class, TestPart::class, 'test_id', 'part_id');
+        return $this->hasManyThrough(ExamQuestion::class, ExamPart::class, 'exam_id', 'part_id');
     }
 
     public function group_questions(): HasManyThrough
     {
-        return $this->hasManyThrough(TestGroupQuestion::class, TestPart::class, 'test_id', 'part_id');
+        return $this->hasManyThrough(ExamGroup::class, ExamPart::class, 'exam_id', 'part_id');
     }
 
     public function histories(): HasMany

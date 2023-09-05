@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('history_answers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('part_id')->constrained(table:'history_parts')->onDelete('cascade');
-            $table->foreignId('answer_id')->constrained(table:'test_answers')->onDelete('cascade');
-            $table->foreignId('question_id')->constrained(table:'test_questions')->onDelete('cascade');
+            $table->foreignId('question_id')->constrained(table:'exam_questions')->onDelete('cascade');
             $table->timestamps();
         });
     }

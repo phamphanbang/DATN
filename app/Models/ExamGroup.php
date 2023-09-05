@@ -7,19 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class TestGroupQuestion extends Model
+class ExamGroup extends Model
 {
     use HasFactory;
 
-    protected $table = 'test_group_questions';
+    protected $table = 'exam_groups';
 
     public function part():BelongsTo
     {
-        return $this->belongsTo(TestPart::class,'part_id')->orderBy('order_in_part');
+        return $this->belongsTo(ExamPart::class,'part_id')->orderBy('order_in_part');
     }
 
     public function questions():HasMany
     {
-        return $this->hasMany(TestQuestion::class,'group_id');
+        return $this->hasMany(ExamQuestion::class,'group_id');
     }
 }

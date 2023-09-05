@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TemplatePart extends Model
 {
@@ -15,7 +16,8 @@ class TemplatePart extends Model
         'total_questions',
         'has_group_question',
         'part_type',
-        'template_id'
+        'template_id',
+        'num_of_answers'
     ];
 
     protected $table = 'template_parts';

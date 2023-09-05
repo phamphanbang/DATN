@@ -14,6 +14,6 @@ class QuestionType extends Model
 
     public function questions(): HasMany
     {
-        return $this->hasMany(TestQuestion::class, 'question_type_id');
+        return $this->hasMany(ExamQuestion::class, 'question_type_id');
     }
 }

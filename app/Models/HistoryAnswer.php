@@ -19,11 +19,11 @@ class HistoryAnswer extends Model
 
     public function answer(): BelongsTo
     {
-        return $this->belongsTo(TestAnswer::class, 'answer_id');
+        return $this->belongsTo(ExamAnswer::class, 'answer_id');
     }
 
     public function question(): BelongsTo
     {
-        return $this->belongsTo(TestQuestion::class, 'question_id');
+        return $this->belongsTo(ExamQuestion::class, 'question_id');
     }
 }

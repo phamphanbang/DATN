@@ -23,7 +23,8 @@ class TemplatePartFactory extends Factory
             'order_in_test' => rand(1,9),
             'total_questions' => 10,
             'part_type' => config('enum.part_type.LISTENING'),
-            'has_group_question' => false
+            'has_group_question' => false,
+            'num_of_answers' => 4
         ];
     }
 

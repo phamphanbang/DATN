@@ -8,29 +8,29 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
-class TestPart extends Model
+class ExamPart extends Model
 {
     use HasFactory;
 
-    protected $table = 'test_parts';
+    protected $table = 'exam_parts';
 
     public function test(): BelongsTo
     {
-        return $this->belongsTo(Test::class, 'test_id')->orderBy('order_in_test');
+        return $this->belongsTo(Exam::class, 'exam_id');
     }
 
     public function group_questions(): HasMany
     {
-        return $this->hasMany(TestGroupQuestion::class);
+        return $this->hasMany(ExamGroup::class);
     }
 
     public function questions(): HasMany
     {
-        return $this->hasMany(TestQuestion::class, 'part_id');
+        return $this->hasMany(ExamQuestion::class, 'part_id');
     }
 
     public function question_types(): HasManyThrough
     {
-        return $this->hasManyThrough(QuestionType::class, TestQuestion::class, 'part_id', 'question_type_id');
+        return $this->hasManyThrough(QuestionType::class, ExamQuestion::class, 'part_id', 'question_type_id');
     }
 }

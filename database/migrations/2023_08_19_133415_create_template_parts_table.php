@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('template_id')->constrained()->onDelete('cascade');
             $table->integer('order_in_test');
             $table->integer('total_questions');
+            $table->integer('num_of_answers');
             $table->enum('part_type', ['reading', 'listening']);
             $table->boolean('has_group_question');
             $table->timestamps();

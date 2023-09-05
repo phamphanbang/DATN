@@ -2,15 +2,15 @@
 
 namespace Database\Factories;
 
-use App\Models\TestPart;
+use App\Models\ExamPart;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TestPart>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ExamPart>
  */
-class TestPartFactory extends Factory
+class ExamPartFactory extends Factory
 {
-    protected $model = TestPart::class;
+    protected $model = ExamPart::class;
     /**
      * Define the model's default state.
      *

@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('test_parts', function (Blueprint $table) {
+        Schema::create('exam_parts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('test_id')->constrained()->onDelete('cascade');
-            $table->integer('total_questions');
+            $table->foreignId('exam_id')->constrained()->onDelete('cascade');
             $table->integer('order_in_test');
             $table->enum('part_type', ['reading', 'listening']);
             $table->boolean('has_group_question');
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('test_parts');
+        Schema::dropIfExists('exam_parts');
     }
 };
