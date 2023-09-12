@@ -13,7 +13,7 @@ class TemplatePart extends Model
 
     protected $fillable = [
         'order_in_test',
-        'total_questions',
+        'num_of_questions',
         'has_group_question',
         'part_type',
         'template_id',

@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('template_id')->constrained()->onDelete('cascade');
             $table->string('name')->unique();
-            $table->integer('total_views');
-            $table->enum('status', ['active', 'disable']);
-            $table->string('audio')->nullable();
+            $table->integer('total_views')->default(0);
+            $table->enum('status', ['active', 'disable', 'draft'])->default('draft');
+            $table->string('audio')->nullable()->default(null);
             $table->timestamps();
         });
     }

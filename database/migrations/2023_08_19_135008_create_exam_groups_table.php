@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('exam_groups', function (Blueprint $table) {
             $table->id();
             $table->foreignId('part_id')->constrained(table: 'exam_parts')->onDelete('cascade');
-            $table->text('question');
+            $table->text('question')->nullable()->default(null);
+            $table->integer('order_in_part');
             $table->integer('from_question');
             $table->integer('to_question');
-            $table->string('attachment')->nullable();
+            $table->string('attachment')->nullable()->default(null);
+            $table->string('audio')->nullable()->default(null);
             $table->timestamps();
         });
     }

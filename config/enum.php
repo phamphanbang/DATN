@@ -10,6 +10,15 @@ return [
         "ACTIVE" => "active",
         "DISABLE" => "disable"
     ],
+    "exam_status" => [
+        "ACTIVE" => "active",
+        "DISABLE" => "disable",
+        "DRAFT" => 'draft'
+    ],
+    "answer_status" => [
+        "RIGHT" => true,
+        "WRONG" => false
+    ],
     "test_status" => [
         "ACTIVE" => "active",
         "DISABLE" => "disable"

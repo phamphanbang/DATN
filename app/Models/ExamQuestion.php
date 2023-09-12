@@ -14,7 +14,17 @@ class ExamQuestion extends Model
 
     protected $table = 'exam_questions';
 
-    public function group_question(): BelongsTo
+    protected $fillable = [
+        'part_id',
+        'group_id',
+        'order_in_test',
+        'question',
+        'question_type_id',
+        'attachment',
+        'audio'
+    ];
+
+    public function group(): BelongsTo
     {
         return $this->belongsTo(ExamGroup::class, 'group_id')->orderBy('order_in_test');
     }

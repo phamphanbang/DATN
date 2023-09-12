@@ -2,131 +2,234 @@
 
 namespace App\Repositories;
 
-use App\Models\TemplatePart;
-use App\Models\Test;
+use App\Models\Exam;
 use App\Models\ExamAnswer;
 use App\Models\ExamGroup;
 use App\Models\ExamPart;
 use App\Models\ExamQuestion;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Throwable;
+use Illuminate\Support\Facades\Storage;
 
 class ExamRepository
 {
-    public function store($request)
+
+    public function __construct(
+        protected Exam $exam,
+        protected ExamPart $part,
+        protected ExamGroup $group,
+        protected ExamQuestion $question,
+        protected ExamAnswer $answer
+    ) {
+    }
+
+    public function index($request, $offset, $limit)
     {
-        $temp = [];
-        $temp['template_id'] = $request->template_id;
-        $temp['name'] = $request->name;
-        $temp['total_views'] = 0;
-        $temp['status'] = config('enum.test_status.ACTIVE');
-        $exam_id = Test::create($temp)->id;
-        foreach ($request->parts as $part) {
-            $this->storePart($exam_id, $part);
+        $data = $this->exam->with(['template']);
+
+        if ($request->search) {
+            $data = $data->searchAttributes($data, $request->search);
+        }
+
+        $data = $data->skip($offset)->take($limit)->get();
+
+        return $data;
+    }
+
+    public function storeExam($exam)
+    {
+        $data['name'] = $exam['name'];
+        $data['template_id'] = $exam['template_id'];
+        $data['total_views'] = 0;
+        $data['status'] = config('enum.exam_status.DRAFT');
+        $exam_id = $this->exam->create($data)->id;
+        return $exam_id;
+    }
+
+    public function storePart($part)
+    {
+        $part_id = $this->part->create($part)->id;
+        return $part_id;
+    }
+
+    public function storeGroup($group)
+    {
+        $group_id = $this->group->create($group)->id;
+        return $group_id;
+    }
+
+    public function storeQuestion($question)
+    {
+        $question_id = $this->question->create($question)->id;
+        return $question_id;
+    }
+
+    public function storeAnswer($question_id, $order_in_question)
+    {
+        $default_answer = 'A.';
+        switch ($order_in_question) {
+            case 1:
+                $default_answer = 'A.';
+                break;
+            case 2:
+                $default_answer = 'B.';
+                break;
+            case 3:
+                $default_answer = 'C.';
+                break;
+            case 4:
+                $default_answer = 'D.';
+                break;
+        }
+        $answer['question_id'] = $question_id;
+        $answer['order_in_question'] = $order_in_question;
+        $answer['answer'] = $default_answer;
+        $answer['is_right'] = $order_in_question == 1 ? config('enum.answer_status.RIGHT') : config('enum.answer_status.WRONG');
+
+        $answer_id = $this->answer->create($answer);
+        return $answer_id;
+    }
+
+    public function updateExam($id, $data)
+    {
+        try {
+            $exam = $this->exam->findOrFail($id);
+        } catch (Throwable $e) {
+            throw new ModelNotFoundException('Không tìm thấy bài thi với id ' . $id);
+        }
+        $exam->name = $data['name'];
+        $exam->status = $data['status'];
+        $exam->save();
+        return true;
+    }
+
+    public function updatePart($id, $data)
+    {
+        try {
+            $part = $this->part->findOrFail($id);
+        } catch (Throwable $e) {
+            throw new ModelNotFoundException('Không tìm thấy phần thi với id ' . $id);
+        }
+        return $part;
+    }
+
+    public function updateGroup($id, $part, $exam_id, $data)
+    {
+        try {
+            $group = $this->group->findOrFail($id);
+        } catch (Throwable $e) {
+            throw new ModelNotFoundException('Không tìm thấy nhóm câu hỏi với id ' . $id);
+        }
+
+        $defaultName = 'part-' . $part->order_in_test . '-group-' . $group->order_in_part;
+
+        $audioFileName = $defaultName . '_audio';
+        $attachmentFileName = $defaultName . '_attachment';
+
+        $group->attachment = $this->fileHandler($group, $attachmentFileName, $data, $exam_id, 'attachment');
+        $group->audio = $this->fileHandler($group, $audioFileName, $data, $exam_id, 'audio');
+
+        $group->question = $data['question'];
+
+        $group->save();
+        return true;
+    }
+
+    public function updateQuestion($id, $part, $exam_id, $data)
+    {
+        try {
+            $question = $this->question->findOrFail($id);
+        } catch (Throwable $e) {
+            throw new ModelNotFoundException('Không tìm thấy câu hỏi với id ' . $id);
+        }
+
+        $defaultName = 'part-' . $part->order_in_test . '-question-' . $question->order_in_test;
+
+        $audioFileName = $defaultName . '_audio';
+        $attachmentFileName = $defaultName . '_attachment';
+
+        $question->attachment = $this->fileHandler($question, $attachmentFileName, $data, $exam_id, 'attachment');
+        $question->audio = $this->fileHandler($question, $audioFileName, $data, $exam_id, 'audio');
+
+        $question->question = $data['question'];
+        $question->question_type_id = $data['question_type_id'];
+
+        $question->save();
+        return true;
+    }
+
+    public function updateAnswer($id, $data)
+    {
+        try {
+            $answer = $this->answer->findOrFail($id);
+        } catch (Throwable $e) {
+            throw new ModelNotFoundException('Không tìm thấy đáp án với id ' . $id);
+        }
+        $answer->answer = $data['answer'];
+        $answer->status = $data['status'];
+        $answer->save();
+        return true;
+    }
+
+    public function show($id)
+    {
+        try {
+            $exam = $this->exam->with([
+                // 'parts',
+                // 'parts.groups',
+                // 'parts.groups.questions',
+                // 'parts.groups.questions.answers',
+                // 'parts.questions',
+                // 'parts.questions.answers'
+            ])->findOrFail($id);
+        } catch (Throwable $e) {
+            throw new ModelNotFoundException('Không tìm thấy bài thi với id ' . $id);
+        }
+        return $exam;
+    }
+
+    public function deleteExam($id)
+    {
+        try {
+            $exam = $this->exam->findOrFail($id);
+        } catch (Throwable $e) {
+            throw new ModelNotFoundException('Không tìm thấy bài thi với id ' . $id);
+        }
+        $exam->delete();
+        if (Storage::exists('exams/' . $id)) {
+            Storage::deleteDirectory('exams/' . $id);
         }
         return true;
     }
 
-    public function update($id, $request)
+    public function fileHandler($model, $fileName, $data, $exam_id, $type)
     {
-        $test = Test::findOrFail($id);
-        $test->template_id = $request->template_id;
-        $test->name = $request->name;
-        $test->status = $request->status;
-        $test->update();
+        $res = null;
+        if ($data[$type] == null && $model[$type] != null) {
+            $res = $this->removeFile($exam_id, $model[$type]);
+        }
+        if (request()->file($fileName)) {
+            $res = $this->saveFile($exam_id, $fileName);
+        }
+        return $res;
     }
 
-    public function updatePart($exam_id, $request)
+    public function saveFile($exam_id, $saveFile)
     {
-        $part = ExamPart::findOrFail($request['id']);
-        $part->order_in_test = $request['order_in_test'];
-        $part->part_type = $request['part_type'];
-        $part->total_questions = $request['total_question'];
-        $part->has_group_question = $request['has_group_question'];
-        $part->update();
+        $file = request()->file($saveFile);
+        $extension = $file->getClientOriginalExtension();
+        $fileName = 'exam_' . $exam_id . '_' . $saveFile . $extension;
+        $file->storeAs('exams/' . $exam_id, $fileName);
+        return $fileName;
     }
 
-    public function storePart($exam_id, $part)
+    public function removeFile($exam_id, $fileName)
     {
-        $temp = [];
-        $temp['exam_id'] = $exam_id;
-        $temp['order_in_test'] = $part['order_in_test'];
-        $temp['part_type'] = $part['part_type'];
-        $temp['total_questions'] = $part['total_question'];
-        $temp['has_group_question'] = $part['has_group_question'];
-        $part_id = ExamPart::create($temp)->id;
-        if ($part['has_group_question']) {
-            foreach ($part['groups'] as $group) {
-                $this->storeGroupQuestion($exam_id, $part_id, $group);
-            }
-        } else {
-            foreach ($part['questions'] as $question) {
-                $this->storeQuestion($exam_id, $part_id, null, $question);
-            }
+        $linkToFile = 'exams/' . $exam_id . '/' . $fileName;
+        if (Storage::exists($linkToFile)) {
+            Storage::delete($linkToFile);
         }
-    }
-
-    public function storeGroupQuestion($exam_id, $part_id, $group)
-    {
-        $temp = [];
-        $temp['order_in_part'] = $group['order_in_part'];
-        $temp['question'] = $group['question'];
-        $fileName = null;
-        if(request()->file($group['attchment'])) {
-            $file = request()->file($group['attchment']);
-            $extension = $file->getClientOriginalExtension();
-            $fileName = 'test_' . $exam_id . 'part_' . $part_id . 'group_' . $group['order_in_part'] . '.' . $extension;
-            $file->storeAs('tests/' . $exam_id, $fileName);
-        }
-
-        $temp['attachment'] = $fileName;
-        $group_id = TestGroupQuestion::create($temp)->id;
-
-        foreach ($group['questions'] as $question) {
-            $this->storeQuestion($exam_id, $part_id, $group_id, $question);
-        }
-    }
-
-    public function storeQuestion($exam_id, $part_id, $group_id = null, $question)
-    {
-        $question_temp = [];
-        $question_temp['group_id'] = $group_id;
-        $question_temp['part_id'] = $part_id;
-        $question_temp['order_in_test'] = $question['order_in_test'];
-        $question_temp['question'] = $question['question'];
-
-        $fileName = null;
-        if(request()->file($question['attchment'])) {
-            $file = request()->file($question['attchment']);
-            $extension = $file->getClientOriginalExtension();
-            $fileName = 'test_' . $exam_id . '_part_' . $part_id . '_question_' . $question['order_in_test'] . '_attachment' . '.' . $extension;
-            $file->storeAs('tests/' . $exam_id, $fileName);
-        }
-        $question_temp['attachment'] = $fileName;
-
-        $fileName = null;
-        if(request()->file($question['audio'])) {
-            $file = request()->file($question['audio']);
-            $extension = $file->getClientOriginalExtension();
-            $fileName = 'test_' . $exam_id . '_part_' . $part_id . '_question_' . $question['audio'] . '_audio' . '.' . $extension;
-            $file->storeAs('tests/' . $exam_id, $fileName);
-        }
-        $question_temp['audio'] = $fileName;
-
-        $question_id = ExamQuestion::create($question_temp)->id;
-        $question_temp['answer_id'] = 0;
-
-        foreach ($question['answers'] as $answer) {
-            $temp = [];
-            $temp['question_id'] = $question_id;
-            $temp['order_in_question'] = $answer['order_in_question'];
-            $temp['answer'] = $answer['answer'];
-            $result_id = ExamAnswer::create($temp)->id;
-            if ($question['answer_id'] == $answer['order_in_question']) {
-                $question_temp['answer_id'] = $result_id;
-            }
-        }
-
-        ExamQuestion::findOrFail($question_id)->update($question_temp);
+        return null;
     }
 }

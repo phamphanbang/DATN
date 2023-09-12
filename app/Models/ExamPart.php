@@ -14,14 +14,21 @@ class ExamPart extends Model
 
     protected $table = 'exam_parts';
 
+    protected $fillable = [
+        'exam_id',
+        'order_in_test',
+        'part_type',
+        'has_group_question'
+    ];
+
     public function test(): BelongsTo
     {
         return $this->belongsTo(Exam::class, 'exam_id');
     }
 
-    public function group_questions(): HasMany
+    public function groups(): HasMany
     {
-        return $this->hasMany(ExamGroup::class);
+        return $this->hasMany(ExamGroup::class, 'part_id');
     }
 
     public function questions(): HasMany

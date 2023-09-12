@@ -13,6 +13,16 @@ class ExamGroup extends Model
 
     protected $table = 'exam_groups';
 
+    protected $fillable = [
+        'part_id',
+        'order_in_part',
+        'question',
+        'attachment',
+        'from_question',
+        'to_question',
+        'audio'
+    ];
+
     public function part():BelongsTo
     {
         return $this->belongsTo(ExamPart::class,'part_id')->orderBy('order_in_part');

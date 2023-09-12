@@ -13,6 +13,14 @@ class Exam extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'template_id',
+        'status',
+        'total_views',
+        'audio'
+    ];
+
     public function comments(): MorphMany
     {
         return $this->morphMany(Comment::class, 'commentable');

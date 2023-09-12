@@ -16,8 +16,9 @@ return new class extends Migration
             $table->foreignId('part_id')->constrained(table: 'exam_parts')->onDelete('cascade');
             $table->foreignId('group_id')->nullable()->constrained(table: 'exam_groups')->onDelete('cascade');
             $table->foreignId('question_type_id')->nullable()->constrained(table: 'question_types')->onDelete('cascade');
-            $table->text('question');
-            $table->string('audio')->nullable();
+            $table->text('question')->nullable()->default(null);
+            $table->string('audio')->nullable()->default(null);
+            $table->string('order_in_test');
             $table->timestamps();
         });
     }

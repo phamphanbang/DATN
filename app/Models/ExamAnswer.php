@@ -13,6 +13,13 @@ class ExamAnswer extends Model
     use HasFactory;
 
     protected $table = 'exam_answers';
+    
+    protected $fillable = [
+        'question_id',
+        'order_in_question',
+        'answer',
+        'is_right'
+    ];
 
     public function question(): BelongsTo
     {
