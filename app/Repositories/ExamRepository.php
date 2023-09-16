@@ -100,11 +100,24 @@ class ExamRepository
         }
         $exam->name = $data['name'];
         $exam->status = $data['status'];
+        $fileName = 'exam-' . $exam->id . '-audio';
+        if ($data['audio'] == null && $exam->audio != null) {
+            $linkToFile = 'exams/' . $exam->id . '/' . $exam->audio;
+            if (Storage::exists($linkToFile)) {
+                Storage::delete($linkToFile);
+            }
+        }
+        if (request()->hasFile($fileName)) {
+            $file = request()->file($fileName);
+            $extension = $file->getClientOriginalExtension();
+            $audioName = $fileName . $extension;
+            $file->storeAs('exams/' . $exam->id, $audioName);
+        }
         $exam->save();
-        return true;
+        return $exam;
     }
 
-    public function updatePart($id, $data)
+    public function getPart($id)
     {
         try {
             $part = $this->part->findOrFail($id);
@@ -114,18 +127,18 @@ class ExamRepository
         return $part;
     }
 
-    public function updateGroup($id, $part, $exam_id, $data)
+    public function updateGroup($part, $exam_id, $data)
     {
         try {
-            $group = $this->group->findOrFail($id);
+            $group = $this->group->findOrFail($data['id']);
         } catch (Throwable $e) {
-            throw new ModelNotFoundException('Không tìm thấy nhóm câu hỏi với id ' . $id);
+            throw new ModelNotFoundException('Không tìm thấy nhóm câu hỏi với id ' . $data['id']);
         }
 
         $defaultName = 'part-' . $part->order_in_test . '-group-' . $group->order_in_part;
 
-        $audioFileName = $defaultName . '_audio';
-        $attachmentFileName = $defaultName . '_attachment';
+        $audioFileName = $defaultName . '-audio';
+        $attachmentFileName = $defaultName . '-attachment';
 
         $group->attachment = $this->fileHandler($group, $attachmentFileName, $data, $exam_id, 'attachment');
         $group->audio = $this->fileHandler($group, $audioFileName, $data, $exam_id, 'audio');
@@ -136,18 +149,18 @@ class ExamRepository
         return true;
     }
 
-    public function updateQuestion($id, $part, $exam_id, $data)
+    public function updateQuestion($part, $exam_id, $data)
     {
         try {
-            $question = $this->question->findOrFail($id);
+            $question = $this->question->findOrFail($data['id']);
         } catch (Throwable $e) {
-            throw new ModelNotFoundException('Không tìm thấy câu hỏi với id ' . $id);
+            throw new ModelNotFoundException('Không tìm thấy câu hỏi với id ' . $data['id']);
         }
 
         $defaultName = 'part-' . $part->order_in_test . '-question-' . $question->order_in_test;
 
-        $audioFileName = $defaultName . '_audio';
-        $attachmentFileName = $defaultName . '_attachment';
+        $audioFileName = $defaultName . '-audio';
+        $attachmentFileName = $defaultName . '-attachment';
 
         $question->attachment = $this->fileHandler($question, $attachmentFileName, $data, $exam_id, 'attachment');
         $question->audio = $this->fileHandler($question, $audioFileName, $data, $exam_id, 'audio');
@@ -159,15 +172,15 @@ class ExamRepository
         return true;
     }
 
-    public function updateAnswer($id, $data)
+    public function updateAnswer($data)
     {
         try {
-            $answer = $this->answer->findOrFail($id);
+            $answer = $this->answer->findOrFail($data['id']);
         } catch (Throwable $e) {
-            throw new ModelNotFoundException('Không tìm thấy đáp án với id ' . $id);
+            throw new ModelNotFoundException('Không tìm thấy đáp án với id ' . $data['id']);
         }
         $answer->answer = $data['answer'];
-        $answer->status = $data['status'];
+        $answer->is_right = $data['is_right'];
         $answer->save();
         return true;
     }
@@ -175,14 +188,7 @@ class ExamRepository
     public function show($id)
     {
         try {
-            $exam = $this->exam->with([
-                // 'parts',
-                // 'parts.groups',
-                // 'parts.groups.questions',
-                // 'parts.groups.questions.answers',
-                // 'parts.questions',
-                // 'parts.questions.answers'
-            ])->findOrFail($id);
+            $exam = $this->exam->findOrFail($id);
         } catch (Throwable $e) {
             throw new ModelNotFoundException('Không tìm thấy bài thi với id ' . $id);
         }

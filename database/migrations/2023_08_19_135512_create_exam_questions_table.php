@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('question_type_id')->nullable()->constrained(table: 'question_types')->onDelete('cascade');
             $table->text('question')->nullable()->default(null);
             $table->string('audio')->nullable()->default(null);
+            $table->string('attachment')->nullable()->default(null);
             $table->string('order_in_test');
             $table->timestamps();
         });

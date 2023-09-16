@@ -52,6 +52,45 @@ class ExamService
         return $exam_id;
     }
 
+    public function updateExam($request, $id)
+    {
+        $exam = $this->examRepository->updateExam($id, $request);
+        foreach ($request['parts'] as $requestPart) {
+            $part = $this->examRepository->getPart($requestPart['id']);
+            if (array_key_exists('groups', $requestPart)) {
+                foreach ($requestPart['groups'] as $requestGroup) {
+                    $this->examRepository->updateGroup(
+                        $part,
+                        $exam->id,
+                        $requestGroup
+                    );
+                    foreach ($requestGroup['questions'] as $requestQuestion) {
+                        $this->examRepository->updateQuestion($part, $exam->id, $requestQuestion);
+                        foreach ($requestQuestion['answers'] as $requestAnswer) {
+                            $this->examRepository->updateAnswer($requestAnswer);
+                        }
+                    }
+                }
+            } else {
+                foreach ($requestPart['questions'] as $requestQuestion) {
+                    $this->examRepository->updateQuestion($part, $exam->id, $requestQuestion);
+                    foreach ($requestQuestion['answers'] as $requestAnswer) {
+                        $this->examRepository->updateAnswer($requestAnswer);
+                    }
+                }
+            }
+        }
+
+        return $exam;
+    }
+
+    public function deleteExam($id)
+    {
+        $res = $this->examRepository->deleteExam($id);
+
+        return $res;
+    }
+
     public function show($id)
     {
         $exam = $this->examRepository->show($id);

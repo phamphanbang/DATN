@@ -31,6 +31,32 @@ class ExamController extends Controller
         return response()->success($res, Response::HTTP_OK, 'OK');
     }
 
+    public function update(Request $request , $id)
+    {
+        DB::beginTransaction();
+        try {
+            $res = $this->examService->updateExam($request , $id);
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+        return response()->success($res, Response::HTTP_OK, 'OK');
+    }
+
+    public function delete($id)
+    {
+        DB::beginTransaction();
+        try {
+            $res = $this->examService->deleteExam($id);
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+        return response()->success($res, Response::HTTP_OK, 'OK');
+    }
+
     public function show($id)
     {
         $res = $this->examService->show($id);
