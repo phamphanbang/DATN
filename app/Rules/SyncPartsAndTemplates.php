@@ -23,7 +23,7 @@ class SyncPartsAndTemplates implements ValidationRule
         $total_questions = request('total_questions');
         $questions_from_request = 0;
         foreach($value as $part) {
-            $questions_from_request += $part['total_questions'];
+            $questions_from_request += $part['num_of_questions'];
         }
         if($total_questions !== $questions_from_request) {
             $fail(__('template.validation.parts.questionsEqualTotalQuestions'));

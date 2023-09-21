@@ -47,7 +47,7 @@ return [
         'parts' => [
             'partsEqualTotalParts' => 'Tổng số phần đã tạo không trùng khớp với khai báo',
             'questionsEqualTotalQuestions' => 'Tổng số câu hỏi đã tạo không trùng khớp với khai báo',
-            'total_questions' => [
+            'num_of_questions' => [
                 'required' => 'Trường này không được bỏ trống',
                 'integer' => 'Tổng số câu hỏi phải để kiểu số'
             ],

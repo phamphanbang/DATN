@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Requests\TemplateUpdateRequest;
 use App\Services\TemplateService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -46,7 +47,7 @@ class TemplateController extends Controller
         return response()->success($res, Response::HTTP_OK, __('template.create.success'));
     }
 
-    public function update(Request $request, $id)
+    public function update(TemplateUpdateRequest $request, $id)
     {
         DB::beginTransaction();
         try {

@@ -34,7 +34,7 @@ class TemplateCreateRequest extends FormRequest
             'total_score' => 'required|integer',
             'status' => 'required|in:active,deactive',
             'parts.*.order_in_test' => 'required|integer',
-            'parts.*.total_questions' => 'required|integer',
+            'parts.*.num_of_questions' => 'required|integer',
             'parts.*.part_type' => 'required|in:listening,reading',
             'parts.*.has_group_question' => 'required|boolean',
             'parts' => new SyncPartsAndTemplates
@@ -63,8 +63,8 @@ class TemplateCreateRequest extends FormRequest
 
             'parts.*.order_in_test.required' => __('template.validation.parts.order_in_test.required'),
             'parts.*.order_in_test.integer' => __('template.validation.parts.order_in_test.integer'),
-            'parts.*.total_questions.required' => __('template.validation.parts.total_questions.required'),
-            'parts.*.total_questions.integer' => __('template.validation.parts.total_questions.integer'),
+            'parts.*.num_of_questions.required' => __('template.validation.parts.num_of_questions.required'),
+            'parts.*.num_of_questions.integer' => __('template.validation.parts.num_of_questions.integer'),
             'parts.*.part_type.required' => __('template.validation.parts.part_type.required'),
             'parts.*.part_type.in' => __('template.validation.parts.part_type.in'),
         ];

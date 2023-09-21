@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ExamCreateRequest;
 use App\Http\Resources\ExamDetail;
 use App\Services\ExamService;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class ExamController extends Controller
     ) {
     }
 
-    public function store(Request $request)
+    public function store(ExamCreateRequest $request)
     {
         DB::beginTransaction();
         try {
