@@ -24,46 +24,22 @@ class TemplateUpdateRequest extends FormRequest
     {
         return [
             'name' => 'required|string|unique:templates,name,' . request()->route('template') . '|max:50',
-            'duration' => 'required|string',
             'description' => 'required|string',
-            'total_parts' => 'required|integer',
-            'total_questions' => 'required|integer',
-            'total_score' => 'required|integer',
-            'status' => 'required|in:active,deactive',
-            'parts.*.order_in_test' => 'required|integer',
-            'parts.*.num_of_questions' => 'required|integer',
-            'parts.*.part_type' => 'required|in:listening,reading',
-            'parts.*.has_group_question' => 'required|boolean',
-            'parts' => new SyncPartsAndTemplates
+            'status' => 'required|in:active,deactive'
         ];
     }
 
     public function messages()
     {
         return [
-            'name.required' => __('template.validation.name.required'),
-            'name.string' => __('template.validation.name.string'),
-            'name.unique' => __('template.validation.name.unique'),
-            'name.max' => __('template.validation.name.max'),
-            'description.required' => __('template.validation.description.required'),
-            'description.string' => __('template.validation.description.string'),
-            'duration.required' => __('template.validation.duration.required'),
-            'duration.string' => __('template.validation.duration.string'),
-            'total_parts.required' => __('template.validation.total_parts.required'),
-            'total_parts.integer' => __('template.validation.total_parts.integer'),
-            'total_questions.required' => __('template.validation.total_questions.required'),
-            'total_questions.integer' => __('template.validation.total_questions.integer'),
-            'total_score.required' => __('template.validation.total_score.required'),
-            'total_score.integer' => __('template.validation.total_score.integer'),
-            'status.required' => __('template.validation.status.required'),
-            'status.in' => __('template.validation.status.in'),
-
-            'parts.*.order_in_test.required' => __('template.validation.parts.order_in_test.required'),
-            'parts.*.order_in_test.integer' => __('template.validation.parts.order_in_test.integer'),
-            'parts.*.num_of_questions.required' => __('template.validation.parts.num_of_questions.required'),
-            'parts.*.num_of_questions.integer' => __('template.validation.parts.num_of_questions.integer'),
-            'parts.*.part_type.required' => __('template.validation.parts.part_type.required'),
-            'parts.*.part_type.in' => __('template.validation.parts.part_type.in'),
+            'name.required' => 'The name is required',
+            'name.string' => 'The name must be a string',
+            'name.unique' => 'The name must be unique',
+            'name.max' => 'The name has max length of 50',
+            'description.required' => 'The description is required',
+            'description.string' => 'The description must be a string',
+            'status.required' => 'The status is required',
+            'status.in' => 'The status must be one of these value : active , deactive'
         ];
     }
 
