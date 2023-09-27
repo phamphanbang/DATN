@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tests', function (Blueprint $table) {
+        Schema::create('exam_parts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('template_id')->constrained()->onDelete('cascade');
-            $table->string('name')->unique();
-            $table->integer('total_views');
-            $table->enum('status', ['active', 'disable']);
-            $table->string('panel');
+            $table->foreignId('exam_id')->constrained()->onDelete('cascade');
+            $table->integer('order_in_test');
+            $table->enum('part_type', ['reading', 'listening']);
+            $table->boolean('has_group_question');
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tests');
+        Schema::dropIfExists('exam_parts');
     }
 };

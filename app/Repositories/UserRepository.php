@@ -42,8 +42,8 @@ class UserRepository
 
     public function store($data)
     {
-        $user_id = $this->user->create($data)->id;
-        return $this->user->findOrFail($user_id);
+        $user = $this->user->create($data);
+        return $user;
     }
 
     public function update($id, $data)

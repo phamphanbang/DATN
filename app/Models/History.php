@@ -19,7 +19,7 @@ class History extends Model
 
     public function test(): BelongsTo
     {
-        return $this->belongsTo(Test::class, 'test_id');
+        return $this->belongsTo(Exam::class, 'exam_id');
     }
 
     public function parts(): HasMany

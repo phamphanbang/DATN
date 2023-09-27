@@ -6,6 +6,7 @@ use App\Models\Traits\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Template extends Model
 {
@@ -26,9 +27,9 @@ class Template extends Model
         'description'
     ];
 
-    public function tests(): HasMany
+    public function exams(): HasMany
     {
-        return $this->hasMany(Test::class);
+        return $this->hasMany(Exam::class);
     }
 
     public function parts(): HasMany

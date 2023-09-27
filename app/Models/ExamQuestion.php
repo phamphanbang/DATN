@@ -8,30 +8,35 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class TestQuestion extends Model
+class ExamQuestion extends Model
 {
     use HasFactory;
 
-    protected $table = 'test_questions';
+    protected $table = 'exam_questions';
 
-    public function group_question(): BelongsTo
+    protected $fillable = [
+        'part_id',
+        'group_id',
+        'order_in_test',
+        'question',
+        'question_type_id',
+        'attachment',
+        'audio'
+    ];
+
+    public function group(): BelongsTo
     {
-        return $this->belongsTo(TestGroupQuestion::class, 'group_id')->orderBy('order_in_test');
+        return $this->belongsTo(ExamGroup::class, 'group_id')->orderBy('order_in_test');
     }
 
     public function part(): BelongsTo
     {
-        return $this->belongsTo(TestPart::class, 'part_id')->orderBy('order_in_test');
+        return $this->belongsTo(ExamPart::class, 'part_id')->orderBy('order_in_test');
     }
 
     public function answers(): HasMany
     {
-        return $this->hasMany(TestAnswer::class,'question_id');
-    }
-
-    public function right_answer(): BelongsTo
-    {
-        return $this->belongsTo(TestAnswer::class);
+        return $this->hasMany(ExamAnswer::class, 'question_id');
     }
 
     public function question_type(): BelongsTo
