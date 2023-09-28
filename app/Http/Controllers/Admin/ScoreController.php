@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ScoreCreateRequest;
+use App\Http\Requests\ScoreUpdateRequest;
 use App\Services\ScoreService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -23,11 +25,11 @@ class ScoreController extends Controller
         return response()->success($data, Response::HTTP_OK);
     }
 
-    public function store(Request $request)
+    public function store(ScoreCreateRequest $request)
     {
         DB::beginTransaction();
         try {
-            $res = $this->scoreService->store($request);
+            $res = $this->scoreService->store($request->all());
             DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();
@@ -44,11 +46,11 @@ class ScoreController extends Controller
         return response()->success($data, Response::HTTP_OK, __('score.show.success'));
     }
 
-    public function update(Request $request, $id)
+    public function update(ScoreUpdateRequest $request, $id)
     {
         DB::beginTransaction();
         try {
-            $res = $this->scoreService->update($id, $request);
+            $res = $this->scoreService->update($id, $request->all());
             DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();

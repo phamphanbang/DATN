@@ -42,8 +42,8 @@ class BlogRepository
         $blog = $this->blog->create($data);
         $panel = 'blog-' . $blog->id . '-panel';
         $panel = 'blog-' . $blog->id . '-thumbnail';
-        $blog->panel = $this->fileHandler($blog,$panel,$data,'panel');
-        $blog->thumbnail = $this->fileHandler($blog,$panel,$data,'thumbnail');
+        $blog->panel = $this->fileHandler($blog, $panel, $data, 'panel');
+        $blog->thumbnail = $this->fileHandler($blog, $panel, $data, 'thumbnail');
         $blog->save();
         return $blog;
     }
@@ -57,8 +57,8 @@ class BlogRepository
         }
         $panel = 'blog-' . $blog->id . '-panel';
         $panel = 'blog-' . $blog->id . '-thumbnail';
-        $blog->panel = $this->fileHandler($blog,$panel,$data,'panel');
-        $blog->thumbnail = $this->fileHandler($blog,$panel,$data,'thumbnail');
+        $blog->panel = $this->fileHandler($blog, $panel, $data, 'panel');
+        $blog->thumbnail = $this->fileHandler($blog, $panel, $data, 'thumbnail');
         $blog->name = $data['name'];
         $blog->post = $data['post'];
         $blog->save();
@@ -80,7 +80,7 @@ class BlogRepository
 
     public function fileHandler($model, $fileName, $data, $type)
     {
-        $res = null;
+        $res = "default";
         if ($data[$type] == null && $model[$type] != null) {
             $res = $this->removeFile($model[$type]);
         }

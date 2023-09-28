@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\ExamController;
+use App\Http\Controllers\Admin\ScoreController;
 use App\Http\Controllers\Admin\TemplateController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Http\Request;
@@ -30,4 +32,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:api'], function () {
     Route::resource('users',UserController::class);
     Route::resource('templates',TemplateController::class);
     Route::resource('exams', ExamController::class);
+    Route::resource('blogs', BlogController::class);
+    Route::resource('scores', ScoreController::class);
 });

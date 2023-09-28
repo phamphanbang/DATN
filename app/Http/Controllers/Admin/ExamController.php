@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ExamCreateRequest;
+use App\Http\Requests\ExamUpdateRequest;
 use App\Http\Resources\ExamDetail;
 use App\Services\ExamService;
 use Illuminate\Http\Request;
@@ -32,7 +33,7 @@ class ExamController extends Controller
         return response()->success($res, Response::HTTP_OK, 'OK');
     }
 
-    public function update(Request $request , $id)
+    public function update(ExamUpdateRequest $request , $id)
     {
         DB::beginTransaction();
         try {

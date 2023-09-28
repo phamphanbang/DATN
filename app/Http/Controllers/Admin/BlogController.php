@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BlogCreateRequest;
+use App\Http\Requests\BlogUpdateRequest;
 use App\Services\BlogService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -23,11 +25,11 @@ class BlogController extends Controller
         return response()->success($data, Response::HTTP_OK);
     }
 
-    public function store(Request $request)
+    public function store(BlogCreateRequest $request)
     {
         DB::beginTransaction();
         try {
-            $res = $this->blogService->store($request);
+            $res = $this->blogService->store($request->all());
             DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();
@@ -44,11 +46,11 @@ class BlogController extends Controller
         return response()->success($data, Response::HTTP_OK, __('blog.show.success'));
     }
 
-    public function update(Request $request, $id)
+    public function update(BlogUpdateRequest $request, $id)
     {
         DB::beginTransaction();
         try {
-            $res = $this->blogService->update($id, $request);
+            $res = $this->blogService->update($id, $request->all());
             DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();

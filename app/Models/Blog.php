@@ -10,6 +10,11 @@ class Blog extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'post'
+    ];
+
     public function comments(): MorphMany
     {
         return $this->morphMany(Comment::class, 'commentable');
