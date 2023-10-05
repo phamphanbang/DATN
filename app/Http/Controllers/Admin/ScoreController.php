@@ -20,7 +20,7 @@ class ScoreController extends Controller
 
     public function index(Request $request)
     {
-        $data = $this->scoreService->index($request);
+        $data = $this->scoreService->index();
 
         return response()->success($data, Response::HTTP_OK);
     }

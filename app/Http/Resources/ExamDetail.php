@@ -29,12 +29,13 @@ class ExamDetail extends JsonResource
     {
         $partsArray = [];
         foreach($parts as $part) {
+            $template_part = $part->template;
             $data['id'] = $part['id'];
             $data['exam_id'] = $part['exam_id'];
             $data['order_in_test'] = $part['order_in_test'];
-            $data['part_type'] = $part['part_type'];
-            $data['has_group_question'] = $part['has_group_question'];
-            if($part['has_group_question'] == 1) {
+            $data['part_type'] = $template_part['part_type'];
+            $data['has_group_question'] = $template_part['has_group_question'];
+            if($template_part['has_group_question'] == 1) {
                 $data['groups'] = $this->renderGroup($part->groups);
             } else {
                 $data['questions'] = $this->renderQuestion($part->questions);

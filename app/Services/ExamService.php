@@ -8,7 +8,8 @@ use App\Repositories\TemplateRepository;
 class ExamService
 {
     public function __construct(
-        protected ExamRepository $examRepository
+        protected ExamRepository $examRepository,
+        protected TemplateRepository $templateRepository
     ) {
     }
 
@@ -19,8 +20,9 @@ class ExamService
         foreach ($request['parts'] as $part) {
             $part['exam_id'] = $exam_id;
             $part_id = $this->examRepository->storePart($part);
-            $num_of_answers = $part['num_of_answers'];
-            if ($part['has_group_question']) {
+            $part_info = $this->templateRepository->getPartById($part['template_part_id']);
+            $num_of_answers = $part_info['num_of_answers'];
+            if ($part_info['has_group_question']) {
                 foreach ($part['groups'] as $group) {
                     $group['part_id'] = $part_id;
                     $group_id = $this->examRepository->storeGroup($group);
@@ -37,7 +39,7 @@ class ExamService
                     }
                 }
             } else {
-                $num_of_question = $part['num_of_questions'];
+                $num_of_question = $part_info['num_of_questions'];
                 for ($i = 0; $i < $num_of_question; $i++) {
                     $question['part_id'] = $part_id;
                     $question['order_in_test'] = $question_index;

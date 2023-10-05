@@ -80,21 +80,21 @@ class BlogRepository
 
     public function fileHandler($model, $fileName, $data, $type)
     {
-        $res = "default";
+        $res = $model[$type] ? $model[$type] : 'default';
         if ($data[$type] == null && $model[$type] != null) {
             $res = $this->removeFile($model[$type]);
         }
-        if (request()->file($fileName)) {
-            $res = $this->saveFile($fileName);
+        if (request()->file($type)) {
+            $res = $this->saveFile($fileName, $type);
         }
         return $res;
     }
 
-    public function saveFile($saveFile)
+    public function saveFile($saveFile, $type)
     {
-        $file = request()->file($saveFile);
+        $file = request()->file($type);
         $extension = $file->getClientOriginalExtension();
-        $fileName = $saveFile . $extension;
+        $fileName = $saveFile . '.' .$extension;
         $file->storeAs('blogs/', $fileName);
         return $fileName;
     }

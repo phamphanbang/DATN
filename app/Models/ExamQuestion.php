@@ -19,7 +19,6 @@ class ExamQuestion extends Model
         'group_id',
         'order_in_test',
         'question',
-        'question_type_id',
         'attachment',
         'audio'
     ];
@@ -37,11 +36,6 @@ class ExamQuestion extends Model
     public function answers(): HasMany
     {
         return $this->hasMany(ExamAnswer::class, 'question_id');
-    }
-
-    public function question_type(): BelongsTo
-    {
-        return $this->belongsTo(QuestionType::class, 'question_type_id');
     }
 
     public function history_answers(): HasMany

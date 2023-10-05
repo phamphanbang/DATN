@@ -26,4 +26,9 @@ class TemplatePart extends Model
     {
         return $this->belongsTo(Template::class);
     }
+
+    public function parts(): HasMany
+    {
+        return $this->hasMany(ExamPart::class,'template_part_id');
+    }
 }

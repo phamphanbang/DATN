@@ -7,5 +7,6 @@ return [
     'userNotAuthorize' => 'Bạn không đủ quyền để thực hiện hành động này',
     'templateNotFound' => 'Không tìm thấy bộ đề này',
     'scoreNotFound' => 'Điểm số này không tồn tại',
-    'blogNotFound' => 'Blog này không tồn tại'
+    'blogNotFound' => 'Blog này không tồn tại',
+    'templatePartNotFound' => 'Template part not exist'
 ];

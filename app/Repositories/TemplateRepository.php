@@ -41,6 +41,16 @@ class TemplateRepository
         return $template;
     }
 
+    public function getPartById($id)
+    {
+        try {
+            $part = $this->part->findOrFail($id);
+        } catch (Throwable $e) {
+            throw new ModelNotFoundException(__('exceptions.templatePartNotFound'));
+        }
+        return $part;
+    }
+
     public function storeTemplate($template)
     {
         $template_id = $this->template->create($template)->id;

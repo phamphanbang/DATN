@@ -17,13 +17,17 @@ class ExamPart extends Model
     protected $fillable = [
         'exam_id',
         'order_in_test',
-        'part_type',
-        'has_group_question'
+        'template_part_id'
     ];
 
     public function test(): BelongsTo
     {
         return $this->belongsTo(Exam::class, 'exam_id');
+    }
+
+    public function template(): BelongsTo
+    {
+        return $this->belongsTo(TemplatePart::class, 'template_part_id');
     }
 
     public function groups(): HasMany

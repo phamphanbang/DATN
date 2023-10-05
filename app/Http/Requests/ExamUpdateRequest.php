@@ -44,7 +44,6 @@ class ExamUpdateRequest extends FormRequest
                         $base_question_rule = $base_group_rule . '.questions.' . $question_key;
                         $question_rules = [
                             $base_question_rule . '.id'  => 'required|integer',
-                            $base_question_rule . '.question_type_id'  => 'integer|nullable',
                             $base_question_rule . '.question'  => 'required|string',
                             $base_question_rule . '.attachment'  => 'nullable|string',
                             $base_question_rule . '.audio'  => 'nullable|string',
@@ -67,7 +66,6 @@ class ExamUpdateRequest extends FormRequest
                     $base_question_rule = $base_part_rule . '.questions.' . $question_key;
                     $question_rules = [
                         $base_question_rule . '.id'  => 'required|integer',
-                        $base_question_rule . '.question_type_id'  => 'integer|nullable',
                         $base_question_rule . '.question'  => 'required|string',
                         $base_question_rule . '.attachment'  => 'nullable|string',
                         $base_question_rule . '.audio'  => 'nullable|string',
