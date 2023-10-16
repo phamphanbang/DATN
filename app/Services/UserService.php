@@ -17,12 +17,9 @@ class UserService
 
     public function index($request)
     {
-        $page = $request->page ? $request->page : config('constant.DEFAULT_PAGE');
-        $totalUser = $this->userRepository->countAllUser();
-        $userPerPage = config('constant.USER_PER_PAGE');
-        $totalPage = ceil($totalUser / $userPerPage);
-        $checkPage = $page > $totalPage ? $totalPage : $page;
-        $offset = ($checkPage - 1) * $userPerPage;
+        // $data['totalCount'] = $this->userRepository->countAllUser();
+        $userPerPage = array_key_exists('maxResultCount', $request) ? $request['maxResultCount'] : config('constant.USER_PER_PAGE');
+        $offset = array_key_exists('skipCount', $request) ? $request['skipCount'] : 0;
 
         $data = $this->userRepository->index($request, $offset, $userPerPage);
 

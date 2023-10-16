@@ -18,14 +18,15 @@ class UserRepository
 
     public function index($request, $offset, $limit)
     {
-        $data = $this->user;
-        if ($request->role) {
-            $data = $data->where('role', '=', $request->role);
+        $query = $this->user;
+        if (array_key_exists('role',$request) && $request['role']) {
+            $query = $query->where('role', '=', $request['role']);
         }
-        if ($request->search) {
-            $data = $data->searchAttributes($data, $request->search);
+        if (array_key_exists('search',$request) && $request['search']) {
+            $query = $query->searchAttributes($query, $request['search']);
         }
-        $data = $data->skip($offset)->take($limit)->get();
+        $data['totalCount'] = $query->count();
+        $data['items'] = $query->skip($offset)->take($limit)->get();
 
         return $data;
     }

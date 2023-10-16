@@ -14,14 +14,14 @@ trait Searchable
 
         foreach ($this->getSearchableAttributes() as $column) {
             if (!$firstConditionAdded) {
-                $query = $query->where($table . '.' . $column, 'LIKE', $term . '%');
+                $query = $query->where($table . '.' . $column, 'LIKE', '%' . $term . '%');
 
                 $firstConditionAdded = true;
                 continue;
             }
-            $query = $query->orWhere($table . '.' . $column, 'LIKE', $term . '%');
+            $query = $query->orWhere($table . '.' . $column, 'LIKE', '%' . $term . '%');
         }
-
+        // dd($query->toSql());
         return $query;
     }
 

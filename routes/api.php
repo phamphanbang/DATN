@@ -30,6 +30,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:api'], function () {
     Route::post('auth/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
     Route::resource('users',UserController::class);
+    // Route::post('users', [UserController::class,'store']);
+
     Route::resource('templates',TemplateController::class);
     Route::resource('exams', ExamController::class);
     Route::resource('blogs', BlogController::class);

@@ -22,13 +22,14 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        $data = $this->userService->index($request);
+        $data = $this->userService->index($request->all());
 
-        return response()->success($data, Response::HTTP_OK);
+        return response()->list($data, Response::HTTP_OK);
     }
 
     public function store(UserCreateRequest $request)
     {
+        dd($request);
         DB::beginTransaction();
         try {
             $res = $this->userService->store($request);

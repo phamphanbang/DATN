@@ -20,7 +20,11 @@ class AuthController extends Controller
     {
         $data = $request->only('email', 'password');
         $result = $this->authService->login($data);
-        return response()->success($result, Response::HTTP_OK);
+        return response()->json([
+            "token" => $result["token"],
+            "name" => $result["name"]
+        ],Response::HTTP_OK);
+        // return response()->success($result, Response::HTTP_OK);
     }
 
     public function logout(Request $request)
