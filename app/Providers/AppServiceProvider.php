@@ -41,5 +41,19 @@ class AppServiceProvider extends ServiceProvider
                 'message' => $error
             ], $status_code);
         });
+
+        Response::macro('validateError', function ($error, $status_code) {
+            $errorArray = [];
+            foreach ($error->getMessages() as $key => $error) {
+                $errorArray[] = [
+                    "type" => $key,
+                    "message" => $error[0]
+                ];
+            }
+            return response()->json([
+                'status' => 'fail',
+                'message' => $errorArray
+            ], $status_code);
+        });
     }
 }

@@ -34,27 +34,27 @@ class UserCreateRequest extends FormRequest
         ];
     }
 
-    public function messages()
-    {
-        return [
-            'name.required' => __('valid.user.name.required'),
-            'name.unique' => __('valid.user.name.unique'),
-            'name.max' => __('valid.user.name.max'),
-            'name.min' => __('valid.user.name.min'),
-            'email.required' => __('valid.user.email.required'),
-            'email.email' =>__('valid.user.email.email'),
-            'email.unique' => __('valid.user.email.unique'),
-            'password.required' => __('valid.user.password.required'),
-            'password.string' => __('valid.user.password.string'),
-            'password.min' => __('valid.user.password.min'),
-            'password.max' => __('valid.user.password.max'),
-            'avatar.image' => __('valid.user.avatar.image'),
-            'panel.image' => __('valid.user.panel.image')
-        ];
-    }
+    // public function messages()
+    // {
+    //     return [
+    //         'name.required' => __('valid.user.name.required'),
+    //         'name.unique' => __('valid.user.name.unique'),
+    //         'name.max' => __('valid.user.name.max'),
+    //         'name.min' => __('valid.user.name.min'),
+    //         'email.required' => __('valid.user.email.required'),
+    //         'email.email' =>__('valid.user.email.email'),
+    //         'email.unique' => __('valid.user.email.unique'),
+    //         'password.required' => __('valid.user.password.required'),
+    //         'password.string' => __('valid.user.password.string'),
+    //         'password.min' => __('valid.user.password.min'),
+    //         'password.max' => __('valid.user.password.max'),
+    //         'avatar.image' => __('valid.user.avatar.image'),
+    //         'panel.image' => __('valid.user.panel.image')
+    //     ];
+    // }
 
     protected function failedValidation(Validator $validator)
     {
-        throw new HttpResponseException(response()->error($validator->errors(), Response::HTTP_BAD_REQUEST));
+        throw new HttpResponseException(response()->validateError($validator->errors(), Response::HTTP_BAD_REQUEST));
     }
 }

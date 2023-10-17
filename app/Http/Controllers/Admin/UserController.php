@@ -29,7 +29,6 @@ class UserController extends Controller
 
     public function store(UserCreateRequest $request)
     {
-        dd($request);
         DB::beginTransaction();
         try {
             $res = $this->userService->store($request);
