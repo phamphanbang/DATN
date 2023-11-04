@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ExamController;
 use App\Http\Controllers\Admin\ScoreController;
 use App\Http\Controllers\Admin\TemplateController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\ImageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,7 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::post('/admin/auth/login', [AuthController::class, 'login'])->name('admin.login');
+Route::get('images/users/{filename}', [ImageController::class,'showUser']);
 
 Route::group(['prefix' => 'admin', 'middleware' => 'auth:api'], function () {
     Route::post('auth/logout', [AuthController::class, 'logout'])->name('admin.logout');

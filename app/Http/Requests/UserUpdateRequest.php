@@ -25,36 +25,43 @@ class UserUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|max:50|min:8|unique:users,name,' . request('name'),
-            'email' => 'required|email|unique:users,email' . request('email'),
-            'password' => 'required|string|max:20|min:8',
-            'avatar' => 'nullable|image',
+            'name' => 'required|max:50|min:8|unique:users,name,' . request()->route('user'),
+            'email' => 'required|email|unique:users,email,' . request()->route('user'),
+            'avatar' => $this->getValidationRule('avatar'),
             'panel' => 'nullable|image',
             'role' => 'required|in:admin,user'
         ];
     }
 
-    public function messages()
+    public function getValidationRule(String $key): string
     {
-        return [
-            'name.required' => __('valid.user.name.required'),
-            'name.unique' => __('valid.user.name.unique'),
-            'name.max' => __('valid.user.name.max'),
-            'name.min' => __('valid.user.name.min'),
-            'email.required' => __('valid.user.email.required'),
-            'email.email' =>__('valid.user.email.email'),
-            'email.unique' => __('valid.user.email.unique'),
-            'password.required' => __('valid.user.password.required'),
-            'password.string' => __('valid.user.password.string'),
-            'password.min' => __('valid.user.password.min'),
-            'password.max' => __('valid.user.password.max'),
-            'avatar.image' => __('valid.user.avatar.image'),
-            'panel.image' => __('valid.user.panel.image')
-        ];
+        if (request()->hasFile($key)) {
+            return "nullable|mimes:png,jpg";
+        }
+        return "nullable|string";
     }
+
+    // public function messages()
+    // {
+    //     return [
+    //         'name.required' => __('valid.user.name.required'),
+    //         'name.unique' => __('valid.user.name.unique'),
+    //         'name.max' => __('valid.user.name.max'),
+    //         'name.min' => __('valid.user.name.min'),
+    //         'email.required' => __('valid.user.email.required'),
+    //         'email.email' =>__('valid.user.email.email'),
+    //         'email.unique' => __('valid.user.email.unique'),
+    //         'password.required' => __('valid.user.password.required'),
+    //         'password.string' => __('valid.user.password.string'),
+    //         'password.min' => __('valid.user.password.min'),
+    //         'password.max' => __('valid.user.password.max'),
+    //         'avatar.image' => __('valid.user.avatar.image'),
+    //         'panel.image' => __('valid.user.panel.image')
+    //     ];
+    // }
 
     protected function failedValidation(Validator $validator)
     {
-        throw new HttpResponseException(response()->error($validator->errors(), Response::HTTP_BAD_REQUEST));
+        throw new HttpResponseException(response()->validateError($validator->errors(), Response::HTTP_BAD_REQUEST));
     }
 }

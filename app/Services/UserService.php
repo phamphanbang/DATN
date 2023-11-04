@@ -68,11 +68,10 @@ class UserService
     public function update($id, $request)
     {
         $data = [];
-        $data['name'] = $request->name;
-        $data['email'] = $request->email;
-        $data['password'] = Hash::make($request->password);
-        $data['avatar'] = $request->avatar;
-        $data['panel'] = $request->panel;
+        $data['name'] = $request['name'];
+        $data['email'] = $request['email'];
+        $data['avatar'] = $request['avatar'];
+        $data['panel'] = $request['avatar'];
         $keys = ['avatar', 'panel'];
         foreach ($keys as $key) {
             if ($request->hasFile($key)) {
@@ -85,7 +84,7 @@ class UserService
             }
         }
 
-        return $this->userRepository->update($id, $request);
+        return $this->userRepository->update($id, $data);
     }
 
     public function destroy($id)
