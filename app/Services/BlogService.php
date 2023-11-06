@@ -14,13 +14,9 @@ class BlogService
 
     public function index($request)
     {
-        $page = $request->page ? $request->page : config('constant.DEFAULT_PAGE');
-        $totalUser = $this->blogRepository->countAllBlog();
-        $userPerPage = config('constant.USER_PER_PAGE');
-        $totalPage = ceil($totalUser / $userPerPage);
-        $checkPage = $page > $totalPage ? $totalPage : $page;
-        $offset = ($checkPage - 1) * $userPerPage;
-        return $this->blogRepository->index($request, $offset, $userPerPage);
+        $blogPerpage = array_key_exists('maxResultCount', $request) ? $request['maxResultCount'] : config('constant.USER_PER_PAGE');
+        $offset = array_key_exists('skipCount', $request) ? $request['skipCount'] : 0;
+        return $this->blogRepository->index($request, $offset, $blogPerpage);
     }
 
     public function show($id)

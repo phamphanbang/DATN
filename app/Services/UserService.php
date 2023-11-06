@@ -71,6 +71,7 @@ class UserService
         $data['name'] = $request['name'];
         $data['email'] = $request['email'];
         $data['avatar'] = $request['avatar'];
+        $data['password'] = Hash::make($request['password']);
         $data['panel'] = $request['avatar'];
         $keys = ['avatar', 'panel'];
         foreach ($keys as $key) {
@@ -83,6 +84,14 @@ class UserService
                 $data[$key] = $fileName;
             }
         }
+
+        return $this->userRepository->update($id, $data);
+    }
+
+    public function resetPassword($id, $request)
+    {
+        $data = [];
+        $data['password'] = Hash::make($request['password']);
 
         return $this->userRepository->update($id, $data);
     }

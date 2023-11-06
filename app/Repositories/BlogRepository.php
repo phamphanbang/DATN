@@ -18,11 +18,12 @@ class BlogRepository
 
     public function index($request, $offset, $limit)
     {
-        $data = $this->blog;
-        if ($request->search) {
-            $data = $data->searchAttributes($data, $request->search);
+        $query = $this->blog;
+        if (array_key_exists('search',$request) && $request['search']) {
+            $query = $query->searchAttributes($query, $request['search']);
         }
-        $data = $data->skip($offset)->take($limit)->get();
+        $data['totalCount'] = $query->count();
+        $data['items'] = $query->skip($offset)->take($limit)->get();
 
         return $data;
     }
@@ -41,9 +42,9 @@ class BlogRepository
     {
         $blog = $this->blog->create($data);
         $panel = 'blog-' . $blog->id . '-panel';
-        $panel = 'blog-' . $blog->id . '-thumbnail';
+        $thumbnail = 'blog-' . $blog->id . '-thumbnail';
         $blog->panel = $this->fileHandler($blog, $panel, $data, 'panel');
-        $blog->thumbnail = $this->fileHandler($blog, $panel, $data, 'thumbnail');
+        $blog->thumbnail = $this->fileHandler($blog, $thumbnail, $data, 'thumbnail');
         $blog->save();
         return $blog;
     }

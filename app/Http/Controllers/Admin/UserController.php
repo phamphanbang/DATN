@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UserCreateRequest;
-use App\Http\Requests\UserUpdateRequest;
+use App\Http\Requests\Admin\UserCreateRequest;
+use App\Http\Requests\Admin\UserResetPasswordRequest;
+use App\Http\Requests\Admin\UserUpdateRequest;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -49,6 +50,20 @@ class UserController extends Controller
     }
 
     public function update(UserUpdateRequest $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $res = $this->userService->update($id, $request);
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
+        return response()->success($res, Response::HTTP_OK, __('user.update.success'));
+    }
+
+    public function resetPassword(UserResetPasswordRequest $request, $id)
     {
         DB::beginTransaction();
         try {

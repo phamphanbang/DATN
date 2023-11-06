@@ -48,7 +48,11 @@ class Handler extends ExceptionHandler
                 $message = __('exceptions.needLogin');
                 $statusCode = Response::HTTP_UNAUTHORIZED;
                 break;
+            default:
+                $message = __('exceptions.serverError');
+                $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
+
         return response()->error($message, $statusCode);
     }
 }

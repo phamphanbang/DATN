@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Storage;
 
 class ImageController extends Controller
 {
-    public function showUser($filename)
+    public function showImage($prefix, $filename)
     {
-        $path = storage_path('app/users/' . $filename);
+        $path = storage_path('app/' . $prefix . '/' . $filename);
 
         if (!file_exists($path)) {
             return response()->json(['message' => 'Image not found'], 404);

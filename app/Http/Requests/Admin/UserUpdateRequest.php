@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 
-class UserCreateRequest extends FormRequest
+class UserUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,13 +25,20 @@ class UserCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|unique:users,name|max:50|min:4',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|max:20|min:8',
-            'avatar' => 'nullable|image',
+            'name' => 'required|max:50|min:8|unique:users,name,' . request()->route('user'),
+            'email' => 'required|email|unique:users,email,' . request()->route('user'),
+            'avatar' => $this->getValidationRule('avatar'),
             'panel' => 'nullable|image',
             'role' => 'required|in:admin,user'
         ];
+    }
+
+    public function getValidationRule(String $key): string
+    {
+        if (request()->hasFile($key)) {
+            return "nullable|mimes:png,jpg";
+        }
+        return "nullable|string";
     }
 
     // public function messages()

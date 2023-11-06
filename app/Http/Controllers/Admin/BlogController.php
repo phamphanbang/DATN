@@ -20,9 +20,9 @@ class BlogController extends Controller
 
     public function index(Request $request)
     {
-        $data = $this->blogService->index($request);
+        $data = $this->blogService->index($request->all());
 
-        return response()->success($data, Response::HTTP_OK);
+        return response()->list($data, Response::HTTP_OK);
     }
 
     public function store(BlogCreateRequest $request)

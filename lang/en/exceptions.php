@@ -1,12 +1,13 @@
 <?php
 
 return [
-    'authenFail' => 'Email hoặc mật khẩu không đúng',
-    'needLogin' => 'Bạn cần đăng nhập để dùng chức năng này',
-    'userNotFound' => 'Không tìm thấy người dùng',
-    'userNotAuthorize' => 'Bạn không đủ quyền để thực hiện hành động này',
-    'templateNotFound' => 'Không tìm thấy bộ đề này',
-    'scoreNotFound' => 'Điểm số này không tồn tại',
-    'blogNotFound' => 'Blog này không tồn tại',
-    'templatePartNotFound' => 'Template part not exist'
+    'authenFail' => 'Wrong email or password',
+    'needLogin' => 'You need login to use this function',
+    'userNotFound' => 'User not found',
+    'userNotAuthorize' => 'This account does not have enough authority',
+    'templateNotFound' => 'Template not found',
+    'scoreNotFound' => 'Score not exist',
+    'blogNotFound' => 'Blog not exist',
+    'templatePartNotFound' => 'Template part not exist',
+    'serverError' => 'Oops, Server error'
 ];
