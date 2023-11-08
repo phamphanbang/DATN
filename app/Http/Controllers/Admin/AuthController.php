@@ -24,7 +24,6 @@ class AuthController extends Controller
             "token" => $result["token"],
             "name" => $result["name"]
         ],Response::HTTP_OK);
-        // return response()->success($result, Response::HTTP_OK);
     }
 
     public function logout(Request $request)

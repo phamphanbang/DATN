@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\BlogCreateRequest;
+use App\Http\Requests\Admin\BlogCreateRequest;
 use App\Http\Requests\BlogUpdateRequest;
 use App\Services\BlogService;
 use Illuminate\Http\Request;
@@ -43,7 +43,7 @@ class BlogController extends Controller
     {
         $data = $this->blogService->show($id);
 
-        return response()->success($data, Response::HTTP_OK, __('blog.show.success'));
+        return response()->show($data);
     }
 
     public function update(BlogUpdateRequest $request, $id)

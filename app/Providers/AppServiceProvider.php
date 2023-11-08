@@ -28,6 +28,10 @@ class AppServiceProvider extends ServiceProvider
             ], $status_code);
         });
 
+        Response::macro('show', function ($data) {
+            return response()->json($data);
+        });
+
         Response::macro('list', function ($data, $status_code) {
             return response()->json([
                 'items' => $data['items'],

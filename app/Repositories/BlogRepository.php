@@ -57,9 +57,9 @@ class BlogRepository
             throw new ModelNotFoundException(__('exceptions.blogNotFound'));
         }
         $panel = 'blog-' . $blog->id . '-panel';
-        $panel = 'blog-' . $blog->id . '-thumbnail';
+        $thumbnail = 'blog-' . $blog->id . '-thumbnail';
         $blog->panel = $this->fileHandler($blog, $panel, $data, 'panel');
-        $blog->thumbnail = $this->fileHandler($blog, $panel, $data, 'thumbnail');
+        $blog->thumbnail = $this->fileHandler($blog, $thumbnail, $data, 'thumbnail');
         $blog->name = $data['name'];
         $blog->post = $data['post'];
         $blog->save();
@@ -88,6 +88,7 @@ class BlogRepository
         if (request()->file($type)) {
             $res = $this->saveFile($fileName, $type);
         }
+        dump($res);
         return $res;
     }
 
