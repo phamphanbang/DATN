@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class ScoreCreateRequest extends FormRequest
+class ScoreUpdateRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class ScoreCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'questions' => 'required|unique:scores,questions|integer',
+            'questions' => 'required|unique:scores,questions,' . request()->route('score') . ',questions|integer',
             'type' => 'required|string|in:listening,reading',
             'score' => 'required|integer'
         ];

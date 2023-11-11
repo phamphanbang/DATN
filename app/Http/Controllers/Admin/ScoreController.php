@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ScoreCreateRequest;
-use App\Http\Requests\ScoreUpdateRequest;
+use App\Http\Requests\Admin\ScoreCreateRequest;
+use App\Http\Requests\Admin\ScoreUpdateRequest;
 use App\Services\ScoreService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -22,7 +22,7 @@ class ScoreController extends Controller
     {
         $data = $this->scoreService->index();
 
-        return response()->success($data, Response::HTTP_OK);
+        return response()->list($data, Response::HTTP_OK);
     }
 
     public function store(ScoreCreateRequest $request)
@@ -60,9 +60,9 @@ class ScoreController extends Controller
         return response()->success($res, Response::HTTP_OK, __('score.update.success'));
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        $res = $this->scoreService->destroy($id);
+        $res = $this->scoreService->destroy($request->all());
 
         return response()->success(null, Response::HTTP_OK, __('score.delete.success'));
     }

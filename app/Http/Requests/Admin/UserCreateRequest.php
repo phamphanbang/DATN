@@ -2,12 +2,9 @@
 
 namespace App\Http\Requests\Admin;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Http\Response;
+use App\Http\Requests\BaseRequest;
 
-class UserCreateRequest extends FormRequest
+class UserCreateRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -53,8 +50,4 @@ class UserCreateRequest extends FormRequest
     //     ];
     // }
 
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->validateError($validator->errors(), Response::HTTP_BAD_REQUEST));
-    }
 }

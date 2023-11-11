@@ -38,5 +38,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:api'], function () {
     Route::resource('templates',TemplateController::class);
     Route::resource('exams', ExamController::class);
     Route::resource('blogs', BlogController::class);
-    Route::resource('scores', ScoreController::class);
+    Route::post('scores/delete', [ScoreController::class,'destroy']);
+    Route::resource('scores', ScoreController::class)->except('destroy');
 });

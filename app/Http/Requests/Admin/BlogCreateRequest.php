@@ -2,12 +2,12 @@
 
 namespace App\Http\Requests\Admin;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 
-class BlogCreateRequest extends FormRequest
+class BlogCreateRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,10 +28,5 @@ class BlogCreateRequest extends FormRequest
             'name' => 'required|string|unique:blogs,name|max:50',
             'post' => 'required|string',
         ];
-    }
-
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->validateError($validator->errors(), Response::HTTP_BAD_REQUEST));
     }
 }

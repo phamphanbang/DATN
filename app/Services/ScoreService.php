@@ -32,8 +32,8 @@ class ScoreService
         return $this->scoreRepository->update($id, $request);
     }
 
-    public function destroy($id)
+    public function destroy($request)
     {
-        return $this->scoreRepository->destroy($id);
+        return $this->scoreRepository->destroy($request);
     }
 }
