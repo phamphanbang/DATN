@@ -32,7 +32,7 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $e)
     {
-        // dd($e);
+        dd($e);
         $message = $e->getMessage();
         $statusCode = $e->getCode();
         switch (true) {

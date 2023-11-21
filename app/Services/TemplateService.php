@@ -14,14 +14,16 @@ class TemplateService
 
     public function index($request)
     {
-        $page = $request->page ? $request->page : config('constant.DEFAULT_PAGE');
-        $totalUser = $this->templateRepository->countAllTemplate();
-        $itemPerPage = config('constant.USER_PER_PAGE');
-        $totalPage = ceil($totalUser / $itemPerPage);
-        $checkPage = $page > $totalPage ? $totalPage : $page;
-        $offset = ($checkPage - 1) * $itemPerPage;
+        // $page = $request->page ? $request->page : config('constant.DEFAULT_PAGE');
+        // $totalUser = $this->templateRepository->countAllTemplate();
+        // $itemPerPage = config('constant.USER_PER_PAGE');
+        // $totalPage = ceil($totalUser / $itemPerPage);
+        // $checkPage = $page > $totalPage ? $totalPage : $page;
+        // $offset = ($checkPage - 1) * $itemPerPage;
+        $userPerPage = array_key_exists('maxResultCount', $request) ? $request['maxResultCount'] : config('constant.USER_PER_PAGE');
+        $offset = array_key_exists('skipCount', $request) ? $request['skipCount'] : 0;
 
-        $data = $this->templateRepository->index($request, $offset, $itemPerPage);
+        $data = $this->templateRepository->index($request, $offset, $userPerPage);
 
         return $data;
     }
@@ -47,7 +49,9 @@ class TemplateService
     {
         $this->templateRepository->updateTemplate($id, $request->input());
         foreach($request['parts'] as $part) {
-            $this->templateRepository->updatePart($part['id'],$part);
+            $part['template_id'] = $id;
+            // $this->templateRepository->updatePart($part['id'],$part);
+            $this->templateRepository->storePart($part);
         }
         return true;
     }
@@ -55,6 +59,13 @@ class TemplateService
     public function destroy($id)
     {
         $res = $this->templateRepository->destroy($id);
+
+        return $res;
+    }
+
+    public function getAllTemplates()
+    {
+        $res = $this->templateRepository->getAllTemplates();
 
         return $res;
     }

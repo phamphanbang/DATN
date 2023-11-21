@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
 use App\Rules\SyncPartsAndTemplates;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
+use App\Http\Requests\BaseRequest;
 
-class TemplateCreateRequest extends FormRequest
+class TemplateCreateRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -41,7 +41,7 @@ class TemplateCreateRequest extends FormRequest
                 'parts.' . $key . '.order_in_test' => 'required|integer',
                 'parts.' . $key . '.num_of_questions' => 'required|integer',
                 'parts.' . $key . '.part_type' => 'required|in:listening,reading',
-                'parts.' . $key . '.has_group_question' => 'required|boolean',
+                'parts.' . $key . '.has_group_question' => 'required|string',
             ];
             $rules = array_merge($rules, $part_rules);
         }
@@ -81,10 +81,5 @@ class TemplateCreateRequest extends FormRequest
             $message = array_merge($message, $part_message);
         }
         return $message;
-    }
-
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->error($validator->errors(), Response::HTTP_BAD_REQUEST));
     }
 }

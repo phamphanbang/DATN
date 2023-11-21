@@ -16,7 +16,10 @@ class SyncPartsAndTemplates implements ValidationRule
     {
         $total_parts = request('total_parts');
         $parts_from_request = count($value);
-        if($total_parts !== $parts_from_request) {
+        if($parts_from_request == 0) {
+            $fail(__('template.validation.parts.partsIsNull'));
+        }
+        if($total_parts != $parts_from_request) {
             $fail(__('template.validation.parts.partsEqualTotalParts'));
         }
 
@@ -25,7 +28,7 @@ class SyncPartsAndTemplates implements ValidationRule
         foreach($value as $part) {
             $questions_from_request += $part['num_of_questions'];
         }
-        if($total_questions !== $questions_from_request) {
+        if($total_questions != $questions_from_request) {
             $fail(__('template.validation.parts.questionsEqualTotalQuestions'));
         }
     }

@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/admin/auth/login', [AuthController::class, 'login'])->name('admin.login');
 Route::get('images/{prefix}/{filename}', [ImageController::class,'showImage']);
+Route::get('templates/getAllTemplates', [TemplateController::class,'getAllTemplates']);
 
 Route::group(['prefix' => 'admin', 'middleware' => 'auth:api'], function () {
     Route::post('auth/logout', [AuthController::class, 'logout'])->name('admin.logout');

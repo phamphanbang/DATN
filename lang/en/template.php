@@ -45,8 +45,9 @@ return [
             'in' => 'Giá trị trạng thái không hợp lệ'
         ],
         'parts' => [
-            'partsEqualTotalParts' => 'Tổng số phần đã tạo không trùng khớp với khai báo',
-            'questionsEqualTotalQuestions' => 'Tổng số câu hỏi đã tạo không trùng khớp với khai báo',
+            'partsEqualTotalParts' => 'Number of parts created not equal with total parts',
+            'questionsEqualTotalQuestions' => 'Number of questions created not equal with total questions',
+            'partsIsNull' => 'Numbers of parts cannot be 0',
             'num_of_questions' => [
                 'required' => 'Trường này không được bỏ trống',
                 'integer' => 'Tổng số câu hỏi phải để kiểu số'
@@ -59,7 +60,7 @@ return [
                 'required' => 'Trường này không được bỏ trống',
                 'in' => 'Dạng đề không hợp lệ'
             ],
-            
+
         ]
     ]
 ];

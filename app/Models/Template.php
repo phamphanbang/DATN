@@ -23,8 +23,7 @@ class Template extends Model
     ];
 
     protected $searchableAttributes = [
-        'name',
-        'description'
+        'name'
     ];
 
     public function exams(): HasMany

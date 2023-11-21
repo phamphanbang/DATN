@@ -19,21 +19,29 @@ class TemplateRepository
 
     public function index($request, $offset, $limit)
     {
-        $data = $this->template->with(['parts']);
-
-        if ($request->search) {
-            $data = $data->searchAttributes($data, $request->search);
+        $query = $this->template;
+        if (array_key_exists('search',$request) && $request['search']) {
+            $query = $query->searchAttributes($query, $request['search']);
         }
+        $query = $query->with(['parts'])->withCount('exams');
+        $data['totalCount'] = $query->count();
+        $data['items'] = $query->orderBy('created_at', 'DESC')->skip($offset)->take($limit)->get();
 
-        $data = $data->skip($offset)->take($limit)->get();
+        return $data;
+    }
 
+    public function getAllTemplates()
+    {
+        $query = $this->template;
+        $data['totalCount'] = $query->count();
+        $data['items'] = $query->get(['id','name'])->toArray();
         return $data;
     }
 
     public function show($id)
     {
         try {
-            $template = $this->template->with(['parts'])->findOrFail($id);
+            $template = $this->template->with(['parts'])->withCount('exams')->findOrFail($id);
         } catch (Throwable $e) {
             throw new ModelNotFoundException(__('exceptions.templateNotFound'));
         }
@@ -59,6 +67,7 @@ class TemplateRepository
 
     public function storePart($part)
     {
+        $part["has_group_question"] = "true" ? true : false;
         $part_id = $this->part->create($part)->id;
         return $part_id;
     }
@@ -71,6 +80,7 @@ class TemplateRepository
             throw new ModelNotFoundException(__('exceptions.templateNotFound'));
         }
         $template->update($data);
+        $template->exams()->delete();
         return true;
     }
 

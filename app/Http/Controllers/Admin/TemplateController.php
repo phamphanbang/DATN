@@ -6,7 +6,7 @@ use App\Http\Requests\TemplateUpdateRequest;
 use App\Services\TemplateService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\TemplateCreateRequest;
+use App\Http\Requests\Admin\TemplateCreateRequest;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -22,16 +22,16 @@ class TemplateController extends Controller
 
     public function index(Request $request)
     {
-        $data = $this->templateService->index($request);
+        $data = $this->templateService->index($request->all());
 
-        return response()->success($data, Response::HTTP_OK);
+        return response()->list($data, Response::HTTP_OK);
     }
 
     public function show($id)
     {
         $data = $this->templateService->show($id);
 
-        return response()->success($data, Response::HTTP_OK, __('template.show.success'));
+        return response()->show($data);
     }
 
     public function store(TemplateCreateRequest $request)
@@ -65,5 +65,12 @@ class TemplateController extends Controller
         $res = $this->templateService->destroy($id);
 
         return response()->success(null, Response::HTTP_OK, __('template.delete.success'));
+    }
+
+    public function getAllTemplates()
+    {
+        $data = $this->templateService->getAllTemplates();
+
+        return response()->list($data, Response::HTTP_OK);
     }
 }
