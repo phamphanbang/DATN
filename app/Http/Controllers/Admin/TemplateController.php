@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\TemplateUpdateRequest;
+use App\Http\Requests\Admin\TemplateUpdateRequest;
 use App\Services\TemplateService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;

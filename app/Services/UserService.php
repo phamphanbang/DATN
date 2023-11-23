@@ -18,10 +18,11 @@ class UserService
     public function index($request)
     {
         // $data['totalCount'] = $this->userRepository->countAllUser();
-        $userPerPage = array_key_exists('maxResultCount', $request) ? $request['maxResultCount'] : config('constant.USER_PER_PAGE');
+        $itemPerPage = array_key_exists('maxResultCount', $request) ? $request['maxResultCount'] : config('constant.USER_PER_PAGE');
         $offset = array_key_exists('skipCount', $request) ? $request['skipCount'] : 0;
+        $sorting = array_key_exists('sorting', $request) ? explode(" ", $request['sorting']) : ['id', 'asc'];
 
-        $data = $this->userRepository->index($request, $offset, $userPerPage);
+        $data = $this->userRepository->index($request, $offset, $itemPerPage, $sorting);
 
         return $data;
     }

@@ -16,12 +16,13 @@ class BlogRepository
         $this->blog = $blog;
     }
 
-    public function index($request, $offset, $limit)
+    public function index($request, $offset, $limit, $sorting)
     {
         $query = $this->blog;
         if (array_key_exists('search',$request) && $request['search']) {
             $query = $query->searchAttributes($query, $request['search']);
         }
+        $query = $query->orderBy($sorting[0], $sorting[1]);
         $data['totalCount'] = $query->count();
         $data['items'] = $query->skip($offset)->take($limit)->get();
 

@@ -24,15 +24,16 @@ class ExamRepository
     ) {
     }
 
-    public function index($request, $offset, $limit)
+    public function index($request, $offset, $limit, $sorting)
     {
-        $data = $this->exam->with(['template']);
-
-        if ($request->search) {
-            $data = $data->searchAttributes($data, $request->search);
+        $query = $this->exam;
+        if (array_key_exists('search', $request) && $request['search']) {
+            $query = $query->searchAttributes($query, $request['search']);
         }
-
-        $data = $data->skip($offset)->take($limit)->get();
+        $query = $query->orderBy($sorting[0], $sorting[1]);
+        $query = $query->with(['template'])->withCount('comments');
+        $data['totalCount'] = $query->count();
+        $data['items'] = $query->orderBy('created_at', 'DESC')->skip($offset)->take($limit)->get();
 
         return $data;
     }

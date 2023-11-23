@@ -14,16 +14,11 @@ class TemplateService
 
     public function index($request)
     {
-        // $page = $request->page ? $request->page : config('constant.DEFAULT_PAGE');
-        // $totalUser = $this->templateRepository->countAllTemplate();
-        // $itemPerPage = config('constant.USER_PER_PAGE');
-        // $totalPage = ceil($totalUser / $itemPerPage);
-        // $checkPage = $page > $totalPage ? $totalPage : $page;
-        // $offset = ($checkPage - 1) * $itemPerPage;
-        $userPerPage = array_key_exists('maxResultCount', $request) ? $request['maxResultCount'] : config('constant.USER_PER_PAGE');
+        $itemPerPage = array_key_exists('maxResultCount', $request) ? $request['maxResultCount'] : config('constant.USER_PER_PAGE');
         $offset = array_key_exists('skipCount', $request) ? $request['skipCount'] : 0;
+        $sorting = array_key_exists('sorting', $request) ? explode(" ", $request['sorting']) : ['id', 'asc'];
 
-        $data = $this->templateRepository->index($request, $offset, $userPerPage);
+        $data = $this->templateRepository->index($request, $offset, $itemPerPage, $sorting);
 
         return $data;
     }
@@ -47,11 +42,22 @@ class TemplateService
 
     public function update($id, $request)
     {
-        $this->templateRepository->updateTemplate($id, $request->input());
-        foreach($request['parts'] as $part) {
+        $template = $this->templateRepository->updateTemplate($id, $request->input());
+        $existed_parts = $template->parts->pluck('id')->toArray();
+        foreach ($request['parts'] as $part) {
             $part['template_id'] = $id;
-            // $this->templateRepository->updatePart($part['id'],$part);
-            $this->templateRepository->storePart($part);
+            if ($part['id']) {
+                $this->templateRepository->updatePart($part['id'], $part);
+                $key = array_search($part['id'], $existed_parts);
+                if ($key !== false) {
+                    unset($existed_parts[$key]);
+                }
+            } else {
+                $this->templateRepository->storePart($part);
+            }
+        }
+        foreach ($existed_parts as $part) {
+            $this->templateRepository->destroyPart($part);
         }
         return true;
     }

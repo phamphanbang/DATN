@@ -16,7 +16,9 @@ class BlogService
     {
         $blogPerpage = array_key_exists('maxResultCount', $request) ? $request['maxResultCount'] : config('constant.USER_PER_PAGE');
         $offset = array_key_exists('skipCount', $request) ? $request['skipCount'] : 0;
-        return $this->blogRepository->index($request, $offset, $blogPerpage);
+        $sorting = array_key_exists('sorting', $request) ? explode(" ", $request['sorting']) : ['id', 'asc'];
+
+        return $this->blogRepository->index($request, $offset, $blogPerpage, $sorting);
     }
 
     public function show($id)

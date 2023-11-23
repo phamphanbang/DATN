@@ -17,12 +17,13 @@ class TemplateRepository
         $this->part = $part;
     }
 
-    public function index($request, $offset, $limit)
+    public function index($request, $offset, $limit, $sorting)
     {
         $query = $this->template;
         if (array_key_exists('search',$request) && $request['search']) {
             $query = $query->searchAttributes($query, $request['search']);
         }
+        $query = $query->orderBy($sorting[0], $sorting[1]);
         $query = $query->with(['parts'])->withCount('exams');
         $data['totalCount'] = $query->count();
         $data['items'] = $query->orderBy('created_at', 'DESC')->skip($offset)->take($limit)->get();
@@ -32,9 +33,9 @@ class TemplateRepository
 
     public function getAllTemplates()
     {
-        $query = $this->template;
+        $query = $this->template->where('status','<>',config("enum.test_status.DISABLE"));
         $data['totalCount'] = $query->count();
-        $data['items'] = $query->get(['id','name'])->toArray();
+        $data['items'] = $query->get(['id as value','name as label'])->toArray();
         return $data;
     }
 
@@ -67,6 +68,7 @@ class TemplateRepository
 
     public function storePart($part)
     {
+        unset($part['id']);
         $part["has_group_question"] = "true" ? true : false;
         $part_id = $this->part->create($part)->id;
         return $part_id;
@@ -81,7 +83,7 @@ class TemplateRepository
         }
         $template->update($data);
         $template->exams()->delete();
-        return true;
+        return $template;
     }
 
     public function updatePart($id, $data)
@@ -104,6 +106,17 @@ class TemplateRepository
         }
 
         return $template->delete();
+    }
+
+    public function destroyPart($id)
+    {
+        try {
+            $part = $this->part->findOrFail($id);
+        } catch (Throwable $e) {
+            throw new ModelNotFoundException(__('exceptions.templateNotFound'));
+        }
+
+        return $part->delete();
     }
 
     public function countAllTemplate()

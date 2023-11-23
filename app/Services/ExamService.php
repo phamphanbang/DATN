@@ -13,6 +13,17 @@ class ExamService
     ) {
     }
 
+    public function index($request)
+    {
+        $itemPerPage = array_key_exists('maxResultCount', $request) ? $request['maxResultCount'] : config('constant.USER_PER_PAGE');
+        $offset = array_key_exists('skipCount', $request) ? $request['skipCount'] : 0;
+        $sorting = array_key_exists('sorting', $request) ? explode(" ", $request['sorting']) : ['id', 'asc'];
+
+        $data = $this->examRepository->index($request, $offset, $itemPerPage, $sorting);
+
+        return $data;
+    }
+
     public function storeExam($request)
     {
         $exam_id = $this->examRepository->storeExam($request->input());
@@ -26,7 +37,7 @@ class ExamService
                 foreach ($part['groups'] as $group) {
                     $group['part_id'] = $part_id;
                     $group_id = $this->examRepository->storeGroup($group);
-                    $num_of_question = $group['to_question'] - $group['from_question'];
+                    $num_of_question = $group['to_question'] - $group['from_question'] + 1;
                     for ($i = 0; $i < $num_of_question; $i++) {
                         $question['part_id'] = $part_id;
                         $question['group_id'] = $group_id;

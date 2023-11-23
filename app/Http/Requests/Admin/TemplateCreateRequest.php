@@ -3,9 +3,6 @@
 namespace App\Http\Requests\Admin;
 
 use App\Rules\SyncPartsAndTemplates;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Http\Response;
 use App\Http\Requests\BaseRequest;
 
 class TemplateCreateRequest extends BaseRequest
@@ -32,7 +29,7 @@ class TemplateCreateRequest extends BaseRequest
             'total_parts' => 'required|integer',
             'total_questions' => 'required|integer',
             'total_score' => 'required|integer',
-            'status' => 'required|in:active,deactive',
+            'status' => 'required|in:active,disable',
             'parts' => new SyncPartsAndTemplates,
         ];
 

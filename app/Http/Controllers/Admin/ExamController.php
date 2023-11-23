@@ -20,6 +20,13 @@ class ExamController extends Controller
     ) {
     }
 
+    public function index(Request $request)
+    {
+        $data = $this->examService->index($request->all());
+
+        return response()->list($data, Response::HTTP_OK);
+    }
+
     public function store(ExamCreateRequest $request)
     {
         DB::beginTransaction();
@@ -46,7 +53,7 @@ class ExamController extends Controller
         return response()->success($res, Response::HTTP_OK, 'OK');
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
         DB::beginTransaction();
         try {
