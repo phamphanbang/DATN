@@ -36,8 +36,10 @@ class ExamService
             if ($part_info['has_group_question']) {
                 foreach ($part['groups'] as $group) {
                     $group['part_id'] = $part_id;
+                    $group['from_question'] = $question_index;
+                    $group['to_question'] = $question_index + $group['num_of_questions'] - 1;
                     $group_id = $this->examRepository->storeGroup($group);
-                    $num_of_question = $group['to_question'] - $group['from_question'] + 1;
+                    $num_of_question = $group['num_of_questions'];
                     for ($i = 0; $i < $num_of_question; $i++) {
                         $question['part_id'] = $part_id;
                         $question['group_id'] = $group_id;
@@ -53,6 +55,7 @@ class ExamService
                 $num_of_question = $part_info['num_of_questions'];
                 for ($i = 0; $i < $num_of_question; $i++) {
                     $question['part_id'] = $part_id;
+                    $question['group_id'] = null;
                     $question['order_in_test'] = $question_index;
                     $question_id = $this->examRepository->storeQuestion($question);
                     for ($j = 1; $j <= $num_of_answers; $j++) {
@@ -68,33 +71,58 @@ class ExamService
     public function updateExam($request, $id)
     {
         $exam = $this->examRepository->updateExam($id, $request);
-        foreach ($request['parts'] as $requestPart) {
-            $part = $this->examRepository->getPart($requestPart['id']);
-            if (array_key_exists('groups', $requestPart)) {
-                foreach ($requestPart['groups'] as $requestGroup) {
-                    $this->examRepository->updateGroup(
-                        $part,
-                        $exam->id,
-                        $requestGroup
-                    );
-                    foreach ($requestGroup['questions'] as $requestQuestion) {
-                        $this->examRepository->updateQuestion($part, $exam->id, $requestQuestion);
-                        foreach ($requestQuestion['answers'] as $requestAnswer) {
-                            $this->examRepository->updateAnswer($requestAnswer);
-                        }
-                    }
-                }
-            } else {
-                foreach ($requestPart['questions'] as $requestQuestion) {
-                    $this->examRepository->updateQuestion($part, $exam->id, $requestQuestion);
-                    foreach ($requestQuestion['answers'] as $requestAnswer) {
-                        $this->examRepository->updateAnswer($requestAnswer);
-                    }
-                }
-            }
-        }
+        // foreach ($request['parts'] as $requestPart) {
+        //     $part = $this->examRepository->getPart($requestPart['id']);
+        //     if (array_key_exists('groups', $requestPart)) {
+        //         foreach ($requestPart['groups'] as $requestGroup) {
+        //             $this->examRepository->updateGroup(
+        //                 $part,
+        //                 $exam->id,
+        //                 $requestGroup
+        //             );
+        //             foreach ($requestGroup['questions'] as $requestQuestion) {
+        //                 $this->examRepository->updateQuestion($part, $exam->id, $requestQuestion);
+        //                 foreach ($requestQuestion['answers'] as $requestAnswer) {
+        //                     $this->examRepository->updateAnswer($requestAnswer);
+        //                 }
+        //             }
+        //         }
+        //     } else {
+        //         foreach ($requestPart['questions'] as $requestQuestion) {
+        //             $this->examRepository->updateQuestion($part, $exam->id, $requestQuestion);
+        //             foreach ($requestQuestion['answers'] as $requestAnswer) {
+        //                 $this->examRepository->updateAnswer($requestAnswer);
+        //             }
+        //         }
+        //     }
+        // }
 
         return $exam;
+    }
+
+    public function updateQuestion($request , $id)
+    {
+        $question['id'] = $id;
+        $question['question'] = $request['question'];
+        // $question['attachment'] = $request['question'];
+        // $question['question'] = $request['question'];
+        // dd($question);
+        $res = $this->examRepository->updateQuestion($question);
+        foreach($request['answers'] as $answer) {
+            $res = $this->examRepository->updateAnswer($answer);
+        }
+        return $res;
+    }
+
+    public function updateGroup($request , $id)
+    {
+        $group['id'] = $id;
+        $group['question'] = $request['question'];
+        // $question['attachment'] = $request['question'];
+        // $question['question'] = $request['question'];
+        // dd($question);
+        $res = $this->examRepository->updateGroup($group);
+        return $res;
     }
 
     public function deleteExam($id)

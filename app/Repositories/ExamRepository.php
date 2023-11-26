@@ -101,19 +101,19 @@ class ExamRepository
         }
         $exam->name = $data['name'];
         $exam->status = $data['status'];
-        $fileName = 'exam-' . $exam->id . '-audio';
-        if ($data['audio'] == null && $exam->audio != null) {
-            $linkToFile = 'exams/' . $exam->id . '/' . $exam->audio;
-            if (Storage::exists($linkToFile)) {
-                Storage::delete($linkToFile);
-            }
-        }
-        if (request()->hasFile($fileName)) {
-            $file = request()->file($fileName);
-            $extension = $file->getClientOriginalExtension();
-            $audioName = $fileName . $extension;
-            $file->storeAs('exams/' . $exam->id, $audioName);
-        }
+        // $fileName = 'exam-' . $exam->id . '-audio';
+        // if ($data['audio'] == null && $exam->audio != null) {
+        //     $linkToFile = 'exams/' . $exam->id . '/' . $exam->audio;
+        //     if (Storage::exists($linkToFile)) {
+        //         Storage::delete($linkToFile);
+        //     }
+        // }
+        // if (request()->hasFile($fileName)) {
+        //     $file = request()->file($fileName);
+        //     $extension = $file->getClientOriginalExtension();
+        //     $audioName = $fileName . $extension;
+        //     $file->storeAs('exams/' . $exam->id, $audioName);
+        // }
         $exam->save();
         return $exam;
     }
@@ -128,7 +128,7 @@ class ExamRepository
         return $part;
     }
 
-    public function updateGroup($part, $exam_id, $data)
+    public function updateGroup($data)
     {
         try {
             $group = $this->group->findOrFail($data['id']);
@@ -136,13 +136,13 @@ class ExamRepository
             throw new ModelNotFoundException('Không tìm thấy nhóm câu hỏi với id ' . $data['id']);
         }
 
-        $defaultName = 'part-' . $part->order_in_test . '-group-' . $group->order_in_part;
+        // $defaultName = 'part-' . $part->order_in_test . '-group-' . $group->order_in_part;
 
-        $audioFileName = $defaultName . '-audio';
-        $attachmentFileName = $defaultName . '-attachment';
+        // $audioFileName = $defaultName . '-audio';
+        // $attachmentFileName = $defaultName . '-attachment';
 
-        $group->attachment = $this->fileHandler($group, $attachmentFileName, $data, $exam_id, 'attachment');
-        $group->audio = $this->fileHandler($group, $audioFileName, $data, $exam_id, 'audio');
+        // $group->attachment = $this->fileHandler($group, $attachmentFileName, $data, $exam_id, 'attachment');
+        // $group->audio = $this->fileHandler($group, $audioFileName, $data, $exam_id, 'audio');
 
         $group->question = $data['question'];
 
@@ -150,10 +150,12 @@ class ExamRepository
         return true;
     }
 
-    public function updateQuestion($part, $exam_id, $data)
+    public function updateQuestion($data)
     {
         try {
             $question = $this->question->findOrFail($data['id']);
+            $part = $question->part;
+            $exam_id = $part->test->id;
         } catch (Throwable $e) {
             throw new ModelNotFoundException('Không tìm thấy câu hỏi với id ' . $data['id']);
         }
@@ -163,11 +165,14 @@ class ExamRepository
         $audioFileName = $defaultName . '-audio';
         $attachmentFileName = $defaultName . '-attachment';
 
-        $question->attachment = $this->fileHandler($question, $attachmentFileName, $data, $exam_id, 'attachment');
-        $question->audio = $this->fileHandler($question, $audioFileName, $data, $exam_id, 'audio');
+        if(array_key_exists('attachment',$data)) {
+            $question->attachment = $this->fileHandler($question, $attachmentFileName, $data, $exam_id, 'attachment');
+        }
+        if(array_key_exists('audio',$data)) {
+            $question->audio = $this->fileHandler($question, $audioFileName, $data, $exam_id, 'audio');
+        }
 
         $question->question = $data['question'];
-        $question->question_type_id = $data['question_type_id'];
 
         $question->save();
         return true;
@@ -181,7 +186,7 @@ class ExamRepository
             throw new ModelNotFoundException('Không tìm thấy đáp án với id ' . $data['id']);
         }
         $answer->answer = $data['answer'];
-        $answer->is_right = $data['is_right'];
+        $answer->is_right = $data['is_right'] == "true" ? 1 : 0;
         $answer->save();
         return true;
     }

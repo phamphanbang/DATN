@@ -37,6 +37,9 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth:api'], function () {
     // Route::post('users', [UserController::class,'store']);
 
     Route::resource('templates',TemplateController::class);
+
+    Route::put('exams/questions/{id}',[ExamController::class,'updateQuestion']);
+    Route::put('exams/groups/{id}',[ExamController::class,'updateGroup']);
     Route::resource('exams', ExamController::class);
     Route::resource('blogs', BlogController::class);
     Route::post('scores/delete', [ScoreController::class,'destroy']);

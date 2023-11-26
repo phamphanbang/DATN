@@ -71,9 +71,10 @@ class ExamDetail extends JsonResource
         foreach($questions as $question) {
             $data['id'] = $question['id'];
             $data['part_id'] = $question['part_id'];
-            $data['question_type_id'] = $question['question_type_id'];
+            $data['group_id'] = $question['group_id'];
             $data['question'] = $question['question'];
             $data['audio'] = $question['audio'];
+            $data['attachment'] = $question['attachment'];
             $data['order_in_test'] = $question['order_in_test'];
             $data['answers'] = $this->renderAnswer($question->answers);
             $questionsArray[] = $data;

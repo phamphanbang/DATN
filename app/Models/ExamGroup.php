@@ -30,6 +30,6 @@ class ExamGroup extends Model
 
     public function questions():HasMany
     {
-        return $this->hasMany(ExamQuestion::class,'group_id');
+        return $this->hasMany(ExamQuestion::class,'group_id','id');
     }
 }

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 use Illuminate\Support\Arr;
 
-class ExamCreateRequest extends FormRequest
+class ExamCreateRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -39,8 +39,8 @@ class ExamCreateRequest extends FormRequest
                     $base_group_rule = 'parts.' . $key . '.groups.' . $group_key;
                     $group_rules = [
                         $base_group_rule . '.order_in_part' => 'required|integer',
-                        $base_group_rule . '.from_question' => 'required|integer',
-                        $base_group_rule . '.to_question' => 'required|integer'
+                        $base_group_rule . '.num_of_questions' => 'required|integer',
+
                     ];
                     $part_rules = array_merge($part_rules, $group_rules);
                 }

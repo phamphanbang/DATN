@@ -26,6 +26,7 @@ class UserRepository
             $query = $query->searchAttributes($query, $request['search']);
         }
         $query = $query->orderBy($sorting[0], $sorting[1]);
+        // dd($sorting);
         $data['totalCount'] = $query->count();
         $data['items'] = $query->skip($offset)->take($limit)->get();
 

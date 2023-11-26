@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ExamCreateRequest;
-use App\Http\Requests\ExamUpdateRequest;
+use App\Http\Requests\Admin\ExamCreateRequest;
+use App\Http\Requests\Admin\ExamUpdateRequest;
 use App\Http\Resources\ExamDetail;
 use App\Services\ExamService;
 use Illuminate\Http\Request;
@@ -40,11 +40,37 @@ class ExamController extends Controller
         return response()->success($res, Response::HTTP_OK, 'OK');
     }
 
-    public function update(ExamUpdateRequest $request , $id)
+    public function update(Request $request , $id)
     {
         DB::beginTransaction();
         try {
             $res = $this->examService->updateExam($request , $id);
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+        return response()->success($res, Response::HTTP_OK, 'OK');
+    }
+
+    public function updateQuestion(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $res = $this->examService->updateQuestion($request , $id);
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+        return response()->success($res, Response::HTTP_OK, 'OK');
+    }
+
+    public function updateGroup(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $res = $this->examService->updateGroup($request , $id);
             DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();
@@ -70,6 +96,6 @@ class ExamController extends Controller
     {
         $res = $this->examService->show($id);
 
-        return response()->success(new ExamDetail($res), Response::HTTP_OK, 'OK');
+        return response()->show(new ExamDetail($res));
     }
 }

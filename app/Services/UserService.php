@@ -51,24 +51,26 @@ class UserService
         $data['password'] = Hash::make($request->password);
         $data['avatar'] = 'defaultAvatar.png';
         $data['panel'] = 'defaultPanel.png';
+        $user = $this->userRepository->store($data);
         $keys = ['avatar', 'panel'];
         foreach ($keys as $key) {
             if ($request->hasFile($key)) {
                 $file = $request->file($key);
                 $extension = $file->getClientOriginalExtension();
-                $fileName = $data['name'] . '_' . $key . '.' . $extension;
+                $fileName = $user->id . '_' . $key . '.' . $extension;
                 $file->storeAs('users', $fileName);
 
                 $data[$key] = $fileName;
             }
         }
 
-        return $this->userRepository->store($data);
+        return $this->userRepository->update($user->id, $data);;
     }
 
     public function update($id, $request)
     {
         $data = [];
+        $user = $this->userRepository->show($id);
         $data['name'] = $request['name'];
         $data['email'] = $request['email'];
         $data['avatar'] = $request['avatar'];
@@ -79,10 +81,14 @@ class UserService
             if ($request->hasFile($key)) {
                 $file = $request->file($key);
                 $extension = $file->getClientOriginalExtension();
-                $fileName = $data['name'] . '_' . $key . '.' . $extension;
+                $fileName = $id . '_' . $key . '.' . $extension;
                 $file->storeAs('users', $fileName);
-
                 $data[$key] = $fileName;
+            } elseif ($user[$key] && !$request[$key]) {
+                if (Storage::exists('users/' . $user[$key])) {
+                    Storage::delete('users/' . $user[$key]);
+                    $data[$key] = 'defaultAvatar.png';
+                }
             }
         }
 
