@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\ExamRepository;
 use App\Repositories\TemplateRepository;
+use Illuminate\Support\Facades\Storage;
 
 class ExamService
 {
@@ -70,7 +71,26 @@ class ExamService
 
     public function updateExam($request, $id)
     {
-        $exam = $this->examRepository->updateExam($id, $request);
+        // $exam = $this->examRepository->updateExam($id, $request);
+        $exam = $this->examRepository->show($id);
+        $data['name'] = $request['name'];
+        $data['status'] = $request['status'];
+        $data['audio'] = $request['audio'];
+        $key = 'audio';
+        $folder = 'exams/'.$id;
+        if ($request->hasFile($key)) {
+            $file = $request->file($key);
+            $extension = $file->getClientOriginalExtension();
+            $fileName = $id . '_' . $key . '.' . $extension;
+            $file->storeAs($folder, $fileName);
+            $data[$key] = $fileName;
+        } elseif ($exam[$key] !== $data[$key]) {
+            if (Storage::exists($folder . $exam[$key])) {
+                Storage::delete($folder . $exam[$key]);
+                $data[$key] = '';
+            }
+        }
+        $exam = $this->examRepository->updateExam($id, $data);
         // foreach ($request['parts'] as $requestPart) {
         //     $part = $this->examRepository->getPart($requestPart['id']);
         //     if (array_key_exists('groups', $requestPart)) {
@@ -102,12 +122,30 @@ class ExamService
 
     public function updateQuestion($request , $id)
     {
-        $question['id'] = $id;
-        $question['question'] = $request['question'];
-        // $question['attachment'] = $request['question'];
-        // $question['question'] = $request['question'];
-        // dd($question);
-        $res = $this->examRepository->updateQuestion($question);
+        $data['id'] = $id;
+        $data['question'] = $request['question'];
+        $data['audio'] = $request['audio'];
+        $data['attachment'] = $request['attachment'];
+        $keys = ['audio','attachment'];
+        $question = $this->examRepository->showQuestion($id);
+
+        $folder = 'exams/'.$request['exam_id'];
+
+        foreach($keys as $key) {
+            if ($request->hasFile($key)) {
+                $file = $request->file($key);
+                $extension = $file->getClientOriginalExtension();
+                $fileName = 'question_' . $id . '_' . $key . '.' . $extension;
+                $file->storeAs($folder, $fileName);
+                $data[$key] = $fileName;
+            } elseif ($question[$key] !== $data[$key]) {
+                if (Storage::exists($folder . $question[$key])) {
+                    Storage::delete($folder . $question[$key]);
+                    $data[$key] = '';
+                }
+            }
+        }
+        $res = $this->examRepository->updateQuestion($data);
         foreach($request['answers'] as $answer) {
             $res = $this->examRepository->updateAnswer($answer);
         }
@@ -116,12 +154,27 @@ class ExamService
 
     public function updateGroup($request , $id)
     {
-        $group['id'] = $id;
-        $group['question'] = $request['question'];
-        // $question['attachment'] = $request['question'];
-        // $question['question'] = $request['question'];
-        // dd($question);
-        $res = $this->examRepository->updateGroup($group);
+        $data['id'] = $id;
+        $data['question'] = $request['question'];
+        $keys = ['audio','attachment'];
+        $folder = 'exams/'.$request['exam_id'];
+        $group = $this->examRepository->showGroup($id);
+        foreach($keys as $key) {
+            if ($request->hasFile($key)) {
+                $file = $request->file($key);
+                $extension = $file->getClientOriginalExtension();
+                $fileName = $id . '_' . $key . '.' . $extension;
+                $file->storeAs($folder, $fileName);
+                $data[$key] = $fileName;
+            } elseif ($group[$key] !== $data[$key]) {
+                if (Storage::exists($folder . $group[$key])) {
+                    Storage::delete($folder . $group[$key]);
+                    $data[$key] = '';
+                }
+            }
+        }
+
+        $res = $this->examRepository->updateGroup($data);
         return $res;
     }
 

@@ -73,10 +73,10 @@ class UserService
         $user = $this->userRepository->show($id);
         $data['name'] = $request['name'];
         $data['email'] = $request['email'];
-        $data['avatar'] = $request['avatar'];
+        $data['avatar'] = $request['avatar'] ? $request['avatar'] : 'defaultAvatar.png';
         $data['password'] = Hash::make($request['password']);
-        $data['panel'] = $request['avatar'];
-        $keys = ['avatar', 'panel'];
+        // $data['panel'] = $request['avatar'];
+        $keys = ['avatar'];
         foreach ($keys as $key) {
             if ($request->hasFile($key)) {
                 $file = $request->file($key);
@@ -84,7 +84,7 @@ class UserService
                 $fileName = $id . '_' . $key . '.' . $extension;
                 $file->storeAs('users', $fileName);
                 $data[$key] = $fileName;
-            } elseif ($user[$key] && !$request[$key]) {
+            } elseif ($user[$key] !== $data[$key]) {
                 if (Storage::exists('users/' . $user[$key])) {
                     Storage::delete('users/' . $user[$key]);
                     $data[$key] = 'defaultAvatar.png';

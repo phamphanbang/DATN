@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ExamController;
 use App\Http\Controllers\Admin\ScoreController;
 use App\Http\Controllers\Admin\TemplateController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\ImageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,7 +27,8 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::post('/admin/auth/login', [AuthController::class, 'login'])->name('admin.login');
-Route::get('images/{prefix}/{filename}', [ImageController::class,'showImage']);
+Route::get('images/{type}/{prefix}/{filename}', [FileController::class,'showImage']);
+Route::get('audio/{type}/{prefix}/{filename}', [FileController::class,'showAudio']);
 Route::get('templates/getAllTemplates', [TemplateController::class,'getAllTemplates']);
 
 Route::group(['prefix' => 'admin', 'middleware' => 'auth:api'], function () {

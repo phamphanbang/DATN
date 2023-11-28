@@ -101,6 +101,7 @@ class ExamRepository
         }
         $exam->name = $data['name'];
         $exam->status = $data['status'];
+        $exam->audio = $data['audio'];
         // $fileName = 'exam-' . $exam->id . '-audio';
         // if ($data['audio'] == null && $exam->audio != null) {
         //     $linkToFile = 'exams/' . $exam->id . '/' . $exam->audio;
@@ -143,7 +144,8 @@ class ExamRepository
 
         // $group->attachment = $this->fileHandler($group, $attachmentFileName, $data, $exam_id, 'attachment');
         // $group->audio = $this->fileHandler($group, $audioFileName, $data, $exam_id, 'audio');
-
+        $group->audio = $data['audio'];
+        $group->attachment = $data['attachment'];
         $group->question = $data['question'];
 
         $group->save();
@@ -160,17 +162,20 @@ class ExamRepository
             throw new ModelNotFoundException('Không tìm thấy câu hỏi với id ' . $data['id']);
         }
 
-        $defaultName = 'part-' . $part->order_in_test . '-question-' . $question->order_in_test;
+        // $defaultName = 'part-' . $part->order_in_test . '-question-' . $question->order_in_test;
 
-        $audioFileName = $defaultName . '-audio';
-        $attachmentFileName = $defaultName . '-attachment';
+        // $audioFileName = $defaultName . '-audio';
+        // $attachmentFileName = $defaultName . '-attachment';
 
-        if(array_key_exists('attachment',$data)) {
-            $question->attachment = $this->fileHandler($question, $attachmentFileName, $data, $exam_id, 'attachment');
-        }
-        if(array_key_exists('audio',$data)) {
-            $question->audio = $this->fileHandler($question, $audioFileName, $data, $exam_id, 'audio');
-        }
+        // if(array_key_exists('attachment',$data)) {
+        //     $question->attachment = $this->fileHandler($question, $attachmentFileName, $data, $exam_id, 'attachment');
+        // }
+        // if(array_key_exists('audio',$data)) {
+        //     $question->audio = $this->fileHandler($question, $audioFileName, $data, $exam_id, 'audio');
+        // }
+
+        $question->audio = $data['audio'];
+        $question->attachment = $data['attachment'];
 
         $question->question = $data['question'];
 
@@ -196,9 +201,29 @@ class ExamRepository
         try {
             $exam = $this->exam->findOrFail($id);
         } catch (Throwable $e) {
-            throw new ModelNotFoundException('Không tìm thấy bài thi với id ' . $id);
+            throw new ModelNotFoundException('Can not find exam with id ' . $id);
         }
         return $exam;
+    }
+
+    public function showQuestion($id)
+    {
+        try {
+            $question = $this->question->findOrFail($id);
+        } catch (Throwable $e) {
+            throw new ModelNotFoundException('Can not find exam with id ' . $id);
+        }
+        return $question;
+    }
+
+    public function showGroup($id)
+    {
+        try {
+            $group = $this->group->findOrFail($id);
+        } catch (Throwable $e) {
+            throw new ModelNotFoundException('Can not find exam with id ' . $id);
+        }
+        return $group;
     }
 
     public function deleteExam($id)
