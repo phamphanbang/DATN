@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\ExamController;
 use App\Http\Controllers\Admin\ScoreController;
 use App\Http\Controllers\Admin\TemplateController;
 use App\Http\Controllers\Admin\UserController;
+
+use App\Http\Controllers\User\AuthController as UserAuthController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\ImageController;
 use Illuminate\Http\Request;
@@ -25,13 +27,16 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+Route::post('/auth/login', [UserAuthController::class, 'login']);
+Route::post('/auth/register', [UserAuthController::class, 'register']);
+
 
 Route::post('/admin/auth/login', [AuthController::class, 'login'])->name('admin.login');
 Route::get('images/{type}/{prefix}/{filename}', [FileController::class,'showImage']);
 Route::get('audio/{type}/{prefix}/{filename}', [FileController::class,'showAudio']);
 Route::get('templates/getAllTemplates', [TemplateController::class,'getAllTemplates']);
 
-Route::group(['prefix' => 'admin', 'middleware' => 'auth:api'], function () {
+Route::group(['prefix' => 'admin', 'middleware' => ['auth:api','isAdmin']], function () {
     Route::post('auth/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
     Route::resource('users',UserController::class);

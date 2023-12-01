@@ -25,7 +25,7 @@ class UserUpdateRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|max:50|min:8|unique:users,name,' . request()->route('user'),
+            'name' => 'required|max:20|min:8|unique:users,name,' . request()->route('user'),
             'email' => 'required|email|unique:users,email,' . request()->route('user'),
             'avatar' => $this->getValidationRule('avatar'),
             'panel' => 'nullable|image',

@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'authenFail' => 'Wrong email or password',
+    'authenFail' => 'Mật khẩu hoặc tài khoản không đúng',
     'needLogin' => 'You need login to use this function',
     'userNotFound' => 'User not found',
     'userNotAuthorize' => 'This account does not have enough authority',

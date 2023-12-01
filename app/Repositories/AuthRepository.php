@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Constants;
 use App\Exceptions\UserNotFoundException;
 use App\Models\User;
 use Exception;
@@ -24,6 +25,22 @@ class AuthRepository
         $user = Auth::user();
         $result['token'] = $user->createToken('Token Name')->accessToken;
         $result['name'] = $user->name;
+        $isAdmin = $user->role === 'superadmin' || $user->role === 'admin';
+        $result['isAdmin'] = $isAdmin ? 'true' : 'false';
+        $result['avatar'] = $user->avatar ?? 'defaultAvatar.png';
+        $result['id'] = $user->id;
+        return $result;
+    }
+
+    public function register($data)
+    {
+        $user = $this->user->create($data);
+        $result['token'] = $user->createToken('Token Name')->accessToken;
+        $result['name'] = $user->name;
+        $isAdmin = $user->role === 'superadmin' || $user->role === 'admin';
+        $result['isAdmin'] = $isAdmin ? 'true' : 'false';
+        $result['avatar'] = $user->avatar ?? 'defaultAvatar.png';
+        $result['id'] = $user->id;
         return $result;
     }
 

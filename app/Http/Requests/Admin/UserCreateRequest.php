@@ -22,7 +22,7 @@ class UserCreateRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|unique:users,name|max:50|min:4',
+            'name' => 'required|unique:users,name|max:20|min:4',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|max:20|min:8',
             'avatar' => 'nullable|image',

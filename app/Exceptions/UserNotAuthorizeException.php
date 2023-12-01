@@ -10,7 +10,7 @@ class UserNotAuthorizeException extends Exception
     {
         $response = [
             'status' => 'fail',
-            'message' => "Bạn không đủ quyền để thực hiện hành đọng này",
+            'message' => "Bạn không đủ quyền để thực hiện hành động này",
         ];
         return $response;
     }
