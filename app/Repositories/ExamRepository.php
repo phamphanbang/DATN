@@ -30,6 +30,12 @@ class ExamRepository
         if (array_key_exists('search', $request) && $request['search']) {
             $query = $query->searchAttributes($query, $request['search']);
         }
+        if (array_key_exists('template_id', $request) && $request['template_id']) {
+            $query = $query->where('template_id', $request['template_id']);
+        }
+        if (array_key_exists('status', $request) && $request['status']) {
+            $query = $query->where('status', $request['status']);
+        }
         $query = $query->orderBy($sorting[0], $sorting[1]);
         $query = $query->with(['template'])->withCount('comments');
         $data['totalCount'] = $query->count();
@@ -102,19 +108,6 @@ class ExamRepository
         $exam->name = $data['name'];
         $exam->status = $data['status'];
         $exam->audio = $data['audio'];
-        // $fileName = 'exam-' . $exam->id . '-audio';
-        // if ($data['audio'] == null && $exam->audio != null) {
-        //     $linkToFile = 'exams/' . $exam->id . '/' . $exam->audio;
-        //     if (Storage::exists($linkToFile)) {
-        //         Storage::delete($linkToFile);
-        //     }
-        // }
-        // if (request()->hasFile($fileName)) {
-        //     $file = request()->file($fileName);
-        //     $extension = $file->getClientOriginalExtension();
-        //     $audioName = $fileName . $extension;
-        //     $file->storeAs('exams/' . $exam->id, $audioName);
-        // }
         $exam->save();
         return $exam;
     }
@@ -129,6 +122,22 @@ class ExamRepository
         return $part;
     }
 
+    public function getAnswer($id)
+    {
+        try {
+            $answer = $this->answer->findOrFail($id);
+        } catch (Throwable $e) {
+            throw new ModelNotFoundException('Không tìm thấy câu trả lời với id ' . $id);
+        }
+        return $answer;
+    }
+
+    public function getAnswers($answer_ids)
+    {
+        $answer = $this->answer->whereIn('id',$answer_ids)->get();
+        return $answer;
+    }
+
     public function updateGroup($data)
     {
         try {
@@ -136,14 +145,6 @@ class ExamRepository
         } catch (Throwable $e) {
             throw new ModelNotFoundException('Không tìm thấy nhóm câu hỏi với id ' . $data['id']);
         }
-
-        // $defaultName = 'part-' . $part->order_in_test . '-group-' . $group->order_in_part;
-
-        // $audioFileName = $defaultName . '-audio';
-        // $attachmentFileName = $defaultName . '-attachment';
-
-        // $group->attachment = $this->fileHandler($group, $attachmentFileName, $data, $exam_id, 'attachment');
-        // $group->audio = $this->fileHandler($group, $audioFileName, $data, $exam_id, 'audio');
         $group->audio = $data['audio'];
         $group->attachment = $data['attachment'];
         $group->question = $data['question'];
@@ -161,18 +162,6 @@ class ExamRepository
         } catch (Throwable $e) {
             throw new ModelNotFoundException('Không tìm thấy câu hỏi với id ' . $data['id']);
         }
-
-        // $defaultName = 'part-' . $part->order_in_test . '-question-' . $question->order_in_test;
-
-        // $audioFileName = $defaultName . '-audio';
-        // $attachmentFileName = $defaultName . '-attachment';
-
-        // if(array_key_exists('attachment',$data)) {
-        //     $question->attachment = $this->fileHandler($question, $attachmentFileName, $data, $exam_id, 'attachment');
-        // }
-        // if(array_key_exists('audio',$data)) {
-        //     $question->audio = $this->fileHandler($question, $audioFileName, $data, $exam_id, 'audio');
-        // }
 
         $question->audio = $data['audio'];
         $question->attachment = $data['attachment'];
@@ -240,33 +229,76 @@ class ExamRepository
         return true;
     }
 
-    public function fileHandler($model, $fileName, $data, $exam_id, $type)
+    // public function fileHandler($model, $fileName, $data, $exam_id, $type)
+    // {
+    //     $res = null;
+    //     if ($data[$type] == null && $model[$type] != null) {
+    //         $res = $this->removeFile($exam_id, $model[$type]);
+    //     }
+    //     if (request()->file($fileName)) {
+    //         $res = $this->saveFile($exam_id, $fileName);
+    //     }
+    //     return $res;
+    // }
+
+    // public function saveFile($exam_id, $saveFile)
+    // {
+    //     $file = request()->file($saveFile);
+    //     $extension = $file->getClientOriginalExtension();
+    //     $fileName = 'exam_' . $exam_id . '_' . $saveFile . $extension;
+    //     $file->storeAs('exams/' . $exam_id, $fileName);
+    //     return $fileName;
+    // }
+
+    // public function removeFile($exam_id, $fileName)
+    // {
+    //     $linkToFile = 'exams/' . $exam_id . '/' . $fileName;
+    //     if (Storage::exists($linkToFile)) {
+    //         Storage::delete($linkToFile);
+    //     }
+    //     return null;
+    // }
+
+    public function getExamForHomePage()
     {
-        $res = null;
-        if ($data[$type] == null && $model[$type] != null) {
-            $res = $this->removeFile($exam_id, $model[$type]);
-        }
-        if (request()->file($fileName)) {
-            $res = $this->saveFile($exam_id, $fileName);
-        }
-        return $res;
+        $query = $this->exam;
+        $limit = 8;
+        $query = $query->with(['template']);
+        $data = $query->orderBy('created_at', 'DESC')->take($limit)->get();
+
+        return $data;
     }
 
-    public function saveFile($exam_id, $saveFile)
+    public function getExamDetail($id)
     {
-        $file = request()->file($saveFile);
-        $extension = $file->getClientOriginalExtension();
-        $fileName = 'exam_' . $exam_id . '_' . $saveFile . $extension;
-        $file->storeAs('exams/' . $exam_id, $fileName);
-        return $fileName;
+        try {
+            $exam = $this->exam
+                ->with(['template', 'parts', 'parts.template'])
+                ->withCount('comments')
+                ->where('status', 'active')->findOrFail($id);
+        } catch (Throwable $e) {
+            throw new ModelNotFoundException('Bài thi này không tồn tại');
+        }
+
+        return $exam;
     }
 
-    public function removeFile($exam_id, $fileName)
+    public function getExamForTest($id, $request)
     {
-        $linkToFile = 'exams/' . $exam_id . '/' . $fileName;
-        if (Storage::exists($linkToFile)) {
-            Storage::delete($linkToFile);
+        $query = $this->exam;
+        if (array_key_exists('part', $request) && $request['part']) {
+            $query = $query->with(['parts' => function ($q) use ($request) {
+                $q->whereIn('order_in_test', [...$request['part']])->orderBy('order_in_test', 'asc');
+            }]);
+        } else {
+            $query = $query->with('parts');
         }
-        return null;
+        $query = $query->with('template');
+        try {
+            $exam = $query->where('id', $id)->where('status', 'active')->firstOrFail();
+        } catch (Throwable $e) {
+            throw new ModelNotFoundException('Bài thi này không tồn tại');
+        }
+        return $exam;
     }
 }

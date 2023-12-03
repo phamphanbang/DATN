@@ -29,7 +29,7 @@ class UserUpdateRequest extends BaseRequest
             'email' => 'required|email|unique:users,email,' . request()->route('user'),
             'avatar' => $this->getValidationRule('avatar'),
             'panel' => 'nullable|image',
-            'role' => 'required|in:admin,user'
+            'role' => 'nullable|in:admin,user'
         ];
     }
 

@@ -46,6 +46,7 @@ class TemplateService
         $existed_parts = $template->parts->pluck('id')->toArray();
         foreach ($request['parts'] as $part) {
             $part['template_id'] = $id;
+            $part['has_group_question'] = $part['has_group_question'] == "true" ? true : false;
             if ($part['id']) {
                 $this->templateRepository->updatePart($part['id'], $part);
                 $key = array_search($part['id'], $existed_parts);

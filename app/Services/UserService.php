@@ -74,7 +74,7 @@ class UserService
         $data['name'] = $request['name'];
         $data['email'] = $request['email'];
         $data['avatar'] = $request['avatar'] ? $request['avatar'] : 'defaultAvatar.png';
-        $data['password'] = Hash::make($request['password']);
+        // $data['password'] = Hash::make($request['password']);
         // $data['panel'] = $request['avatar'];
         $keys = ['avatar'];
         foreach ($keys as $key) {

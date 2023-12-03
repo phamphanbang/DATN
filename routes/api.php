@@ -8,8 +8,10 @@ use App\Http\Controllers\Admin\TemplateController;
 use App\Http\Controllers\Admin\UserController;
 
 use App\Http\Controllers\User\AuthController as UserAuthController;
+use App\Http\Controllers\User\ExamController as UserExamController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\User\HomeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +32,15 @@ use Illuminate\Support\Facades\Route;
 Route::post('/auth/login', [UserAuthController::class, 'login']);
 Route::post('/auth/register', [UserAuthController::class, 'register']);
 
+Route::get('/exams',[UserExamController::class,'index']);
+Route::get('/exams/{id}',[UserExamController::class,'getExamDetail']);
+Route::post('/exams/{id}/getExamForTest',[UserExamController::class,'getExamForTest']);
+Route::get('/home',[HomeController::class,'index']);
+
+Route::group(["middleware" => "auth:api"] , function () {
+    Route::post('/exams/{id}/submit',[UserExamController::class,'submit']);
+    Route::get('/exams/{exam_id}/history/{history_id}',[UserExamController::class,'getHistory']);
+});
 
 Route::post('/admin/auth/login', [AuthController::class, 'login'])->name('admin.login');
 Route::get('images/{type}/{prefix}/{filename}', [FileController::class,'showImage']);

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->enum('test_type', ['fulltest', 'practice']);
             $table->integer('right_questions');
             $table->integer('total_questions');
+            $table->integer('wrong_questions');
             $table->integer('score');
             $table->timestamps();
         });

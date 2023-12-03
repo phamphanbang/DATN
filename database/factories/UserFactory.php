@@ -25,7 +25,6 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'role' => config('enum.user_roles.USER'),
             'avatar' => fake()->imageUrl(),
-            'panel' => fake()->imageUrl()
         ];
     }
 

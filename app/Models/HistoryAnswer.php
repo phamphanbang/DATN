@@ -10,6 +10,13 @@ class HistoryAnswer extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'part_id',
+        'answer_id',
+        'question_id',
+        'is_right'
+    ];
+
     protected $table = 'history_answers';
 
     public function part(): BelongsTo
@@ -17,10 +24,10 @@ class HistoryAnswer extends Model
         return $this->belongsTo(HistoryPart::class, 'part_id');
     }
 
-    public function answer(): BelongsTo
-    {
-        return $this->belongsTo(ExamAnswer::class, 'answer_id');
-    }
+    // public function answer(): BelongsTo
+    // {
+    //     return $this->belongsTo(ExamAnswer::class, 'answer_id');
+    // }
 
     public function question(): BelongsTo
     {

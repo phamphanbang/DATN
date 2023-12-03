@@ -11,6 +11,11 @@ class HistoryPart extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'history_id',
+        'part_id'
+    ];
+
     protected $table = 'history_parts';
 
     public function history(): BelongsTo

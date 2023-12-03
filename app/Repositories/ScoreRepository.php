@@ -68,6 +68,16 @@ class ScoreRepository
         return $score;
     }
 
+    public function getScore($question,$type)
+    {
+        try {
+            $score = $this->score->where('questions',$question)->where('type',$type)->firstOrFail();
+        } catch (Throwable $e) {
+            throw new ModelNotFoundException(__('exceptions.scoreNotFound'));
+        }
+        return $score;
+    }
+
     public function store($data)
     {
         $score = Score::where('type', '=', $data['type'])->where('questions', '=', $data['questions'])->first();
