@@ -82,7 +82,7 @@ class TemplateRepository
             throw new ModelNotFoundException(__('exceptions.templateNotFound'));
         }
         $template->update($data);
-        $template->exams()->delete();
+        // $template->exams()->delete();
         return $template;
     }
 

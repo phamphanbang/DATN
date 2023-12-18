@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Requests\Admin;
+namespace App\Http\Requests\User;
 
 use App\Http\Requests\BaseRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
-class UserUpdateRequest extends BaseRequest
+class UserInfoUpdateRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,10 +26,9 @@ class UserUpdateRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|max:20|min:8|unique:users,name,' . request()->route('user'),
-            'email' => 'required|email|unique:users,email,' . request()->route('user'),
+            'name' => 'required|max:20|min:8|unique:users,name,' . Auth::user()->id,
+            'email' => 'required|email|unique:users,email,' . Auth::user()->id,
             'avatar' => $this->getValidationRule('avatar'),
-            'role' => 'nullable|in:admin,user'
         ];
     }
 

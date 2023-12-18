@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->text('post');
+            $table->string('description');
             $table->string('thumbnail')->nullable()->default(null);
             $table->timestamps();
         });

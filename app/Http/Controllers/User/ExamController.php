@@ -7,6 +7,7 @@ use App\Http\Resources\ExamFortest;
 use Illuminate\Http\Request;
 use App\Services\ExamService;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -26,9 +27,9 @@ class ExamController extends Controller
         return response()->list($data, Response::HTTP_OK);
     }
 
-    public function getExamDetail($id)
+    public function getExamDetail(Request $request,$id)
     {
-        $data = $this->examService->getExamDetail($id);
+        $data = $this->examService->getExamDetail($id,$request->all());
 
         return response()->show($data);
     }
@@ -58,6 +59,19 @@ class ExamController extends Controller
         DB::beginTransaction();
         try {
             $data = $this->examService->getHistoryDetail($exam_id,$history_id);
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+        return response()->show($data);
+    }
+
+    public function getHistoryList(Request $request,$user_id)
+    {
+        DB::beginTransaction();
+        try {
+            $data = $this->examService->getHistoryList($request->all(),$user_id);
             DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();

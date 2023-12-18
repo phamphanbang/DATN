@@ -36,6 +36,16 @@ class ExamRepository
         if (array_key_exists('status', $request) && $request['status']) {
             $query = $query->where('status', $request['status']);
         }
+        if (array_key_exists('type', $request) && $request['type']) {
+            $query = $query->where('type', $request['type']);
+        }
+        if (array_key_exists('user', $request) && $request['user']) {
+            // dd($request['user']);
+            $user_id = $request['user'];
+            $query = $query->withCount(['histories' => function ($q) use ($user_id) {
+                $q = $q->where('user_id',$user_id);
+            }]);
+        }
         $query = $query->orderBy($sorting[0], $sorting[1]);
         $query = $query->with(['template'])->withCount('comments');
         $data['totalCount'] = $query->count();
@@ -49,7 +59,8 @@ class ExamRepository
         $data['name'] = $exam['name'];
         $data['template_id'] = $exam['template_id'];
         $data['total_views'] = 0;
-        $data['status'] = config('enum.exam_status.DRAFT');
+        $data['type'] = 'practice';
+        $data['status'] = 'disable';
         $exam_id = $this->exam->create($data)->id;
         return $exam_id;
     }
@@ -107,6 +118,7 @@ class ExamRepository
         }
         $exam->name = $data['name'];
         $exam->status = $data['status'];
+        $exam->type = $data['type'];
         $exam->audio = $data['audio'];
         $exam->save();
         return $exam;
@@ -222,6 +234,10 @@ class ExamRepository
         } catch (Throwable $e) {
             throw new ModelNotFoundException('Không tìm thấy bài thi với id ' . $id);
         }
+        $audio = "exam_".$id."_audio.mp3";
+        if (Storage::disk('s3')->exists($audio)) {
+            Storage::disk('s3')->delete($audio);
+        }
         $exam->delete();
         if (Storage::exists('exams/' . $id)) {
             Storage::deleteDirectory('exams/' . $id);
@@ -263,10 +279,21 @@ class ExamRepository
     {
         $query = $this->exam;
         $limit = 8;
-        $query = $query->with(['template']);
-        $data = $query->orderBy('created_at', 'DESC')->take($limit)->get();
+        $query = $query->with(['template'])->withCount(['comments']);
+        $data = $query->where('status','active')->orderBy('created_at', 'DESC')->take($limit)->get();
 
         return $data;
+    }
+
+    public function increExamView($id)
+    {
+        try {
+            $exam = $this->exam->findOrFail($id);
+        } catch (Throwable $e) {
+            throw new ModelNotFoundException('Không tìm thấy bài thi với id ' . $id);
+        }
+        $exam->total_views = $exam->total_views + 1;
+        $exam->save();
     }
 
     public function getExamDetail($id)

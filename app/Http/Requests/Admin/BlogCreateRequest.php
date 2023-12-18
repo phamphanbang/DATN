@@ -25,8 +25,9 @@ class BlogCreateRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|unique:blogs,name|max:50',
+            'name' => 'required|string|unique:blogs,name|max:100',
             'post' => 'required|string',
+            'description' => 'required|string'
         ];
     }
 }

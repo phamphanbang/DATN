@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('template_parts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('template_id')->constrained()->onDelete('cascade');
+            $table->foreignId('template_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->integer('order_in_test');
             $table->integer('num_of_questions');
             $table->integer('num_of_answers');

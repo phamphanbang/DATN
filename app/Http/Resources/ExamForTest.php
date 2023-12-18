@@ -23,6 +23,7 @@ class ExamFortest extends JsonResource
             "duration" => $duration,
             "name" => $this->name,
             "audio" => $this->audio,
+            "exam_type" => $this->type,
             "parts" => $this->renderPart($this['parts'])
         ];
     }

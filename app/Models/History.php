@@ -18,9 +18,14 @@ class History extends Model
         'duration',
         'score',
         'test_type',
+        'exam_type',
         'right_questions',
         'wrong_questions',
         'total_questions'
+    ];
+
+    protected $casts = [
+        'created_at' => 'date:d/m/Y',
     ];
 
     public function user(): BelongsTo
@@ -41,5 +46,10 @@ class History extends Model
     public function answers(): HasManyThrough
     {
         return $this->hasManyThrough(HistoryAnswer::class, HistoryPart::class, 'history_id', 'part_id');
+    }
+
+    public function scopeWhereDateBetween($query,$fieldName,$fromDate,$todate)
+    {
+        return $query->whereDate($fieldName,'>=',$fromDate)->whereDate($fieldName,'<=',$todate);
     }
 }

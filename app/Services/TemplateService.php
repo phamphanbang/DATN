@@ -51,12 +51,14 @@ class TemplateService
                 $this->templateRepository->updatePart($part['id'], $part);
                 $key = array_search($part['id'], $existed_parts);
                 if ($key !== false) {
+
                     unset($existed_parts[$key]);
                 }
             } else {
                 $this->templateRepository->storePart($part);
             }
         }
+        dump($existed_parts);
         foreach ($existed_parts as $part) {
             $this->templateRepository->destroyPart($part);
         }

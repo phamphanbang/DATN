@@ -13,11 +13,16 @@ class Blog extends Model
 
     protected $fillable = [
         'name',
-        'post'
+        'post',
+        'description'
     ];
 
     protected $searchableAttributes = [
         'name'
+    ];
+
+    protected $casts = [
+        'created_at' => 'date:Y-m-d'
     ];
 
     public function comments(): MorphMany

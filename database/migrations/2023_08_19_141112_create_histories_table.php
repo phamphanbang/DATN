@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('histories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('exam_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('exam_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->string('duration');
             $table->enum('test_type', ['fulltest', 'practice']);
+            $table->enum('exam_type', ['practice', 'test']);
             $table->integer('right_questions');
             $table->integer('total_questions');
             $table->integer('wrong_questions');

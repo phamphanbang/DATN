@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('exam_parts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('exam_id')->constrained()->onDelete('cascade');
-            $table->foreignId('template_part_id')->constrained(table: 'template_parts')->onDelete('cascade');
+            $table->foreignId('template_part_id')->constrained(table: 'template_parts')->onUpdate('cascade')->onDelete('cascade');
             $table->integer('order_in_test');
             $table->timestamps();
         });

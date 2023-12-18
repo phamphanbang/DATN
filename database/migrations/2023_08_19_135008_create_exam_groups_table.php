@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('exam_groups', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('part_id')->constrained(table: 'exam_parts')->onDelete('cascade');
+            $table->foreignId('part_id')->constrained(table: 'exam_parts')->onUpdate('cascade')->onDelete('cascade');
             $table->text('question')->nullable()->default(null);
             $table->integer('order_in_part');
             $table->integer('from_question');

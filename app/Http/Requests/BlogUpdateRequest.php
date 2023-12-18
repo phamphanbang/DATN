@@ -22,8 +22,9 @@ class BlogUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|unique:blogs,name,' . request()->route('blog') . '|max:50',
-            'post' => 'required|string'
+            'name' => 'required|string|unique:blogs,name,' . request()->route('blog') . '|max:100',
+            'post' => 'required|string',
+            'description' => 'required|string'
         ];
     }
 }

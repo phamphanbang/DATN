@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('history_parts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('history_id')->constrained(table: 'histories')->onDelete('cascade');
-            $table->foreignId('part_id')->constrained(table: 'exam_parts')->onDelete('cascade');
+            $table->foreignId('history_id')->constrained(table: 'histories')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('part_id')->constrained(table: 'exam_parts')->onUpdate('cascade')->onDelete('cascade');
+            $table->integer('order_in_test');
             $table->timestamps();
         });
     }

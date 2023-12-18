@@ -22,9 +22,20 @@ class BlogRepository
         if (array_key_exists('search',$request) && $request['search']) {
             $query = $query->searchAttributes($query, $request['search']);
         }
+        $query = $query->withCount('comments');
         $query = $query->orderBy($sorting[0], $sorting[1]);
         $data['totalCount'] = $query->count();
         $data['items'] = $query->skip($offset)->take($limit)->get();
+
+        return $data;
+    }
+
+    public function getBlogForHomePage()
+    {
+        $query = $this->blog;
+        $limit = 8;
+        $query = $query->withCount(['comments']);
+        $data = $query->orderBy('created_at', 'DESC')->take($limit)->get();
 
         return $data;
     }
@@ -44,7 +55,7 @@ class BlogRepository
         $blog = $this->blog->create($data);
         $panel = 'blog-' . $blog->id . '-panel';
         $thumbnail = 'blog-' . $blog->id . '-thumbnail';
-        $blog->panel = $this->fileHandler($blog, $panel, $data, 'panel');
+        // $blog->panel = $this->fileHandler($blog, $panel, $data, 'panel');
         $blog->thumbnail = $this->fileHandler($blog, $thumbnail, $data, 'thumbnail');
         $blog->save();
         return $blog;
@@ -57,9 +68,9 @@ class BlogRepository
         } catch (Throwable $e) {
             throw new ModelNotFoundException(__('exceptions.blogNotFound'));
         }
-        $panel = 'blog-' . $blog->id . '-panel';
+        // $panel = 'blog-' . $blog->id . '-panel';
         $thumbnail = 'blog-' . $blog->id . '-thumbnail';
-        $blog->panel = $this->fileHandler($blog, $panel, $data, 'panel');
+        // $blog->panel = $this->fileHandler($blog, $panel, $data, 'panel');
         $blog->thumbnail = $this->fileHandler($blog, $thumbnail, $data, 'thumbnail');
         $blog->name = $data['name'];
         $blog->post = $data['post'];
@@ -89,7 +100,6 @@ class BlogRepository
         if (request()->file($type)) {
             $res = $this->saveFile($fileName, $type);
         }
-        dump($res);
         return $res;
     }
 

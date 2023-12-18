@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('template_id')->constrained()->onDelete('cascade');
+            $table->foreignId('template_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->string('name')->unique();
             $table->integer('total_views')->default(0);
-            $table->enum('status', ['active', 'disable', 'draft'])->default('draft');
+            $table->enum('status', ['active', 'disable'])->default('disable');
+            $table->enum('type', ['practice', 'test'])->default('practice');
             $table->string('audio')->nullable()->default(null);
             $table->timestamps();
         });

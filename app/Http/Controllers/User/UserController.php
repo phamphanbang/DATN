@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\UserCreateRequest;
-use App\Http\Requests\Admin\UserResetPasswordRequest;
-use App\Http\Requests\Admin\UserUpdateRequest;
+use App\Http\Requests\User\UserResetPasswordRequest;
+use App\Http\Requests\User\UserInfoUpdateRequest;
 use App\Services\UserService;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -21,35 +19,14 @@ class UserController extends Controller
         $this->userService = $userService;
     }
 
-    public function index(Request $request)
-    {
-        $data = $this->userService->index($request->all());
-
-        return response()->list($data, Response::HTTP_OK);
-    }
-
-    public function store(UserCreateRequest $request)
-    {
-        DB::beginTransaction();
-        try {
-            $res = $this->userService->store($request);
-            DB::commit();
-        } catch (Throwable $e) {
-            DB::rollBack();
-            throw $e;
-        }
-
-        return response()->success($res, Response::HTTP_OK, __('user.create.success'));
-    }
-
     public function show($id)
     {
         $data = $this->userService->show($id);
 
-        return response()->success($data, Response::HTTP_OK, __('user.show.success'));
+        return response()->show($data);
     }
 
-    public function update(UserUpdateRequest $request, $id)
+    public function update(UserInfoUpdateRequest $request, $id)
     {
         DB::beginTransaction();
         try {
@@ -77,10 +54,4 @@ class UserController extends Controller
         return response()->success($res, Response::HTTP_OK, __('user.update.success'));
     }
 
-    public function destroy($id)
-    {
-        $res = $this->userService->destroy($id);
-
-        return response()->success(null, Response::HTTP_OK, __('user.delete.success'));
-    }
 }

@@ -18,6 +18,7 @@ class Exam extends Model
         'name',
         'template_id',
         'status',
+        'type',
         'total_views',
         'audio'
     ];

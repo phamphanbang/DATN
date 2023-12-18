@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('exam_questions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('part_id')->constrained(table: 'exam_parts')->onDelete('cascade');
-            $table->foreignId('group_id')->nullable()->constrained(table: 'exam_groups')->onDelete('cascade');
+            $table->foreignId('part_id')->constrained(table: 'exam_parts')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('group_id')->nullable()->constrained(table: 'exam_groups')->onUpdate('cascade')->onDelete('cascade');
             $table->text('question')->nullable()->default(null);
             $table->string('audio')->nullable()->default(null);
             $table->string('attachment')->nullable()->default(null);

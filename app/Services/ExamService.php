@@ -31,6 +31,17 @@ class ExamService
         return $data;
     }
 
+    public function getHistoryList($request, $userId)
+    {
+        $itemPerPage = array_key_exists('maxResultCount', $request) ? $request['maxResultCount'] : config('constant.USER_PER_PAGE');
+        $offset = array_key_exists('skipCount', $request) ? $request['skipCount'] : 0;
+        $sorting = array_key_exists('sorting', $request) ? explode(" ", $request['sorting']) : ['id', 'asc'];
+
+        $data = $this->historyRepository->index($request, $offset, $itemPerPage, $sorting, $userId);
+
+        return $data;
+    }
+
     public function storeExam($request)
     {
         $exam_id = $this->examRepository->storeExam($request->input());
@@ -81,21 +92,22 @@ class ExamService
         $exam = $this->examRepository->show($id);
         $data['name'] = $request['name'];
         $data['status'] = $request['status'];
+        $data['type'] = $request['type'];
         $data['audio'] = $request['audio'];
         $key = 'audio';
         $folder = 'exams/' . $id;
-        if ($request->hasFile($key)) {
-            $file = $request->file($key);
-            $extension = $file->getClientOriginalExtension();
-            $fileName = $id . '_' . $key . '.' . $extension;
-            $file->storeAs($folder, $fileName);
-            $data[$key] = $fileName;
-        } elseif ($exam[$key] !== $data[$key]) {
-            if (Storage::exists($folder . $exam[$key])) {
-                Storage::delete($folder . $exam[$key]);
-                $data[$key] = '';
-            }
-        }
+        // if ($request->hasFile($key)) {
+        //     $file = $request->file($key);
+        //     $extension = $file->getClientOriginalExtension();
+        //     $fileName = $id . '_' . $key . '.' . $extension;
+        //     $file->storeAs($folder, $fileName);
+        //     $data[$key] = $fileName;
+        // } elseif ($exam[$key] !== $data[$key]) {
+        //     if (Storage::exists($folder . $exam[$key])) {
+        //         Storage::delete($folder . $exam[$key]);
+        //         $data[$key] = '';
+        //     }
+        // }
         $exam = $this->examRepository->updateExam($id, $data);
         return $exam;
     }
@@ -115,7 +127,7 @@ class ExamService
             if ($request->hasFile($key)) {
                 $file = $request->file($key);
                 $extension = $file->getClientOriginalExtension();
-                $fileName = 'question_' . $id . '_' . $key . '.' . $extension;
+                $fileName = 'question_' . $question['order_in_test'] . '_' . $key . '.' . $extension;
                 $file->storeAs($folder, $fileName);
                 $data[$key] = $fileName;
             } elseif ($question[$key] !== $data[$key]) {
@@ -145,7 +157,7 @@ class ExamService
             if ($request->hasFile($key)) {
                 $file = $request->file($key);
                 $extension = $file->getClientOriginalExtension();
-                $fileName = $id . '_' . $key . '.' . $extension;
+                $fileName = 'group_' . $group['from_question'] . '_' . $group['to_question'] . '_' . $key . '.' . $extension;
                 $file->storeAs($folder, $fileName);
                 $data[$key] = $fileName;
             } elseif ($group[$key] !== $request[$key]) {
@@ -173,11 +185,16 @@ class ExamService
         return $exam;
     }
 
-    public function getExamDetail($id)
+    public function getExamDetail($id, $request)
     {
         $exam = $this->examRepository->getExamDetail($id);
+        // dd(Auth::user());
+
+        // $histories = $this->historyRepository->getExamHistory($id);
+
         $data['id'] = $exam['id'];
         $data['name'] = $exam['name'];
+        $data['type'] = $exam['type'];
         $data['template_id'] = $exam['template_id'];
         $data['total_views'] = $exam['total_views'];
         $data['template_name'] = $exam['template']['name'];
@@ -185,6 +202,28 @@ class ExamService
         $data['total_parts'] = $exam['template']['total_parts'];
         $data['total_questions'] = $exam['template']['total_questions'];
         $data['comments_count'] = $exam['comments_count'];
+
+        $data['histories'] = [];
+        if (array_key_exists('user', $request) && $request['user']) {
+            $histories = $this->historyRepository->getExamHistory($id, $request['user']);
+            foreach ($histories as $history) {
+                $h['created_at'] = date('d/m/Y', strtotime($history['created_at']));
+                $h['test_type'] = $history['test_type'];
+                $h['exam_type'] = $history['exam_type'];
+                $h['right_questions'] = $history['right_questions'];
+                $h['total_questions'] = $history['total_questions'];
+                $h['duration'] = $history['duration'];
+                $h['score'] = $history['score'];
+                $h['id'] = $history['id'];
+                // $h['parts'] = [];
+                // foreach($history['parts'] as $part) {
+                //     $h['parts'][] = $part['order_in_test'];
+                // }
+                $h['parts'] = $history['parts'];
+                $data['histories'][] = $h;
+            }
+        }
+
 
         foreach ($exam['parts'] as $part) {
             $p['id'] = $part['id'];
@@ -213,6 +252,7 @@ class ExamService
         $history['exam_id'] = $id;
         $history['duration'] = $request['duration'];
         $history['test_type'] = $request['test_type'];
+        $history['exam_type'] = $request['exam_type'];
         $history = $this->historyRepository->storeHistory($history);
         $total_questions = 0;
         $right_questions = 0;
@@ -223,6 +263,7 @@ class ExamService
         foreach ($request['parts'] as $part) {
             $historyPart['history_id'] = $history->id;
             $historyPart['part_id'] = $part['part_id'];
+            $historyPart['order_in_test'] = $part['order_in_test'];
             $part_type = $part['part_type'];
             // dd($historyPart);
             $createPart = $this->historyRepository->storeHistoryPart($historyPart);
@@ -231,7 +272,7 @@ class ExamService
                 $historyAnswer['question_id'] = $answer['question_id'];
                 $historyAnswer['part_id'] = $createPart->id;
                 $historyAnswer['answer_id'] = $answer['answer_id'];
-                $historyAnswer['is_right'] = $answer['is_right'];
+                $historyAnswer['is_right'] = $answer['is_right'] == "true" ? true : false;
                 if (!$answer['answer_id']) {
                     $null_questions++;
                 }
@@ -247,7 +288,7 @@ class ExamService
                 $this->historyRepository->storeHistoryAnswer($historyAnswer);
             }
         }
-        if($request['test_type'] == 'fulltest') {
+        if ($request['test_type'] == 'fulltest') {
             $reading_score = $this->scoreRepository->getScore($reading_questions, 'reading');
             $listening_score = $this->scoreRepository->getScore($listening_questions, 'listening');
             $history->score = $reading_score['score'] + $listening_score['score'];
@@ -258,19 +299,20 @@ class ExamService
         $history->right_questions = $right_questions;
         $history->wrong_questions = $wrong_questions;
         $history->save();
+        $this->examRepository->increExamView($id);
         $data['history_id'] = $history->id;
         return $data;
     }
 
-    public function getHistoryDetail($exam_id,$history_id)
+    public function getHistoryDetail($exam_id, $history_id)
     {
         $history = $this->historyRepository->show($history_id);
         $history_part = [];
-        foreach($history['parts'] as $p) {
+        foreach ($history['parts'] as $p) {
             $history_part[] = $p['part_id'];
         }
         $request['parts'] = $history_part;
-        $exam = $this->examRepository->getExamForTest($exam_id,$request);
+        $exam = $this->examRepository->getExamForTest($exam_id, $request);
 
         $data['name'] = $exam['name'];
         $data['history_id'] = $history_id;
@@ -279,31 +321,37 @@ class ExamService
         $data['right_questions'] = $history['right_questions'];
         $data['wrong_questions'] = $history['wrong_questions'];
         $data['score'] = $history['score'];
+        $data['exam_type'] = $exam['type'];
         $data['test_type'] = $history['test_type'];
-        $data['parts'] = $this->renderPart($exam['parts'],$history['parts']);
+        $data['audio'] = $exam['audio'];
+        $data['duration'] = $history['duration'];
+        $data['parts'] = $this->renderPart($exam['parts'], $history['parts']);
 
         return $data;
     }
 
-    public function renderPart($parts,$history_part)
+    public function renderPart($parts, $history_part)
     {
         $partsArray = [];
         $part_collection = collect($history_part);
         // dd($history_part);
-        foreach($parts as $index => $part) {
+        foreach ($parts as $part) {
             $answer_part = $part_collection->first(function ($a) use ($part) {
                 return $a['part_id'] === $part['id'];
             });
+            if (!$answer_part) {
+                continue;
+            }
             $answers = $answer_part->answers;
             $template_part = $part->template;
             $data['id'] = $part['id'];
             $data['order_in_test'] = $part['order_in_test'];
             $data['part_type'] = $template_part['part_type'];
             $data['has_group_question'] = $template_part['has_group_question'] == 1 ? true : false;
-            if($template_part['has_group_question'] == 1) {
-                $data['groups'] = $this->renderGroup($part->groups,$answers);
+            if ($template_part['has_group_question'] == 1) {
+                $data['groups'] = $this->renderGroup($part->groups, $answers);
             } else {
-                $data['questions'] = $this->renderQuestion($part->questions,$answers);
+                $data['questions'] = $this->renderQuestion($part->questions, $answers);
             }
             $partsArray[] = $data;
             $data = [];
@@ -311,10 +359,10 @@ class ExamService
         return $partsArray;
     }
 
-    public function renderGroup($groups,$answers)
+    public function renderGroup($groups, $answers)
     {
         $groupsArray = [];
-        foreach($groups as $group) {
+        foreach ($groups as $group) {
 
             $data['id'] = $group['id'];
             $data['part_id'] = $group['part_id'];
@@ -324,18 +372,18 @@ class ExamService
             $data['to_question'] = $group['to_question'];
             $data['attachment'] = $group['attachment'];
             $data['audio'] = $group['audio'];
-            $data['questions'] = $this->renderQuestion($group->questions,$answers);
+            $data['questions'] = $this->renderQuestion($group->questions, $answers);
             $groupsArray[] = $data;
             $data = [];
         }
         return $groupsArray;
     }
 
-    public function renderQuestion($questions,$answers)
+    public function renderQuestion($questions, $answers)
     {
         $questionsArray = [];
         $answer_collection = collect($answers);
-        foreach($questions as $question) {
+        foreach ($questions as $question) {
             // dd($answer_collection,$question);
             $answer = $answer_collection->first(function ($a) use ($question) {
                 return $a['question_id'] == $question['id'];
@@ -350,7 +398,6 @@ class ExamService
 
             $data['select_answer'] = $answer['answer_id'];
             $data['is_right'] = $answer['is_right'];
-
             $data['answers'] = $this->renderAnswer($question->answers);
             $questionsArray[] = $data;
             $data = [];
@@ -361,7 +408,7 @@ class ExamService
     public function renderAnswer($answers)
     {
         $answersArray = [];
-        foreach($answers as $answer) {
+        foreach ($answers as $answer) {
             $data['id'] = $answer['id'];
             $data['question_id'] = $answer['question_id'];
             $data['order_in_question'] = $answer['order_in_question'];

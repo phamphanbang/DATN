@@ -64,7 +64,7 @@ class UserService
             }
         }
 
-        return $this->userRepository->update($user->id, $data);;
+        return $this->userRepository->update($user->id, $data);
     }
 
     public function update($id, $request)
@@ -85,6 +85,7 @@ class UserService
                 $file->storeAs('users', $fileName);
                 $data[$key] = $fileName;
             } elseif ($user[$key] !== $data[$key]) {
+                // dd($user[$key],$data[$key]);
                 if (Storage::exists('users/' . $user[$key])) {
                     Storage::delete('users/' . $user[$key]);
                     $data[$key] = 'defaultAvatar.png';

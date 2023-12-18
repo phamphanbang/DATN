@@ -13,7 +13,12 @@ class HistoryPart extends Model
 
     protected $fillable = [
         'history_id',
-        'part_id'
+        'part_id',
+        'order_in_test'
+    ];
+
+    protected $casts = [
+        'created_at' => 'date:Y-m-d'
     ];
 
     protected $table = 'history_parts';

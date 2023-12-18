@@ -21,6 +21,7 @@ class ExamDetail extends JsonResource
             "total_views" => $this->total_views,
             "status" => $this->status,
             "audio" => $this->audio,
+            "type" => $this->type,
             "parts" => $this->renderPart($this->parts)
         ];
     }
