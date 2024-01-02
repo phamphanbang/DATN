@@ -41,7 +41,7 @@ class Handler extends ExceptionHandler
                 $statusCode = Response::HTTP_NOT_FOUND;
                 break;
             case $e instanceof UserNotFoundException:
-                $message = __('exceptions.authenFail');
+                $message = $e->getMessage() ?? __('exceptions.authenFail');
                 $statusCode = Response::HTTP_UNAUTHORIZED;
                 break;
             case $e instanceof UserNeedLoginException:

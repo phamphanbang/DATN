@@ -20,8 +20,21 @@ class AuthRepository
     public function login($data)
     {
         if (!Auth::attempt($data)) {
-            throw new UserNotFoundException();
+            throw new UserNotFoundException(__('exceptions.authenFail'));
         }
+        return $this->userLogin($data);
+    }
+
+    public function adminLogin($data)
+    {
+        if (!Auth::attempt($data)) {
+            throw new UserNotFoundException('Wrong email or password');
+        }
+        return $this->userLogin($data);
+    }
+
+    public function userLogin($data)
+    {
         $user = Auth::user();
         $result['token'] = $user->createToken('Token Name')->accessToken;
         $result['name'] = $user->name;

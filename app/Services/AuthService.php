@@ -19,6 +19,11 @@ class AuthService
         return $this->authRepository->login($data);
     }
 
+    public function adminLogin($data)
+    {
+        return $this->authRepository->adminLogin($data);
+    }
+
     public function register($request)
     {
         $data = [];

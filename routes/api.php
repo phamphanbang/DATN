@@ -53,7 +53,7 @@ Route::group(["middleware" => "auth:api"], function () {
     Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
 });
 
-Route::post('/admin/auth/login', [AuthController::class, 'login'])->name('admin.login');
+Route::post('/admin/auth/login', [AuthController::class, 'adminLogin'])->name('admin.login');
 Route::get('images/{type}/{prefix}/{filename}', [FileController::class, 'showImage']);
 Route::get('audio/{type}/{prefix}/{filename}', [FileController::class, 'showAudio']);
 Route::get('templates/getAllTemplates', [TemplateController::class, 'getAllTemplates']);

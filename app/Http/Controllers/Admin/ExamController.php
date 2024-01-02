@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ExamCreateRequest;
 use App\Http\Requests\Admin\ExamUpdateRequest;
+use App\Http\Requests\Admin\QuestionUpdateRequest;
+use App\Http\Requests\Admin\GroupUpdateRequest;
 use App\Http\Resources\ExamDetail;
 use App\Services\ExamService;
 use Illuminate\Http\Request;
@@ -40,7 +42,7 @@ class ExamController extends Controller
         return response()->success($res, Response::HTTP_OK, 'OK');
     }
 
-    public function update(Request $request , $id)
+    public function update(ExamUpdateRequest $request , $id)
     {
         DB::beginTransaction();
         try {
@@ -53,7 +55,7 @@ class ExamController extends Controller
         return response()->success($res, Response::HTTP_OK, 'OK');
     }
 
-    public function updateQuestion(Request $request, $id)
+    public function updateQuestion(QuestionUpdateRequest $request, $id)
     {
         DB::beginTransaction();
         try {
@@ -66,7 +68,7 @@ class ExamController extends Controller
         return response()->success($res, Response::HTTP_OK, 'OK');
     }
 
-    public function updateGroup(Request $request, $id)
+    public function updateGroup(GroupUpdateRequest $request, $id)
     {
         DB::beginTransaction();
         try {

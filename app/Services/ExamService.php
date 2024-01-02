@@ -188,7 +188,6 @@ class ExamService
     public function getExamDetail($id, $request)
     {
         $exam = $this->examRepository->getExamDetail($id);
-        // dd(Auth::user());
 
         // $histories = $this->historyRepository->getExamHistory($id);
 
@@ -265,7 +264,6 @@ class ExamService
             $historyPart['part_id'] = $part['part_id'];
             $historyPart['order_in_test'] = $part['order_in_test'];
             $part_type = $part['part_type'];
-            // dd($historyPart);
             $createPart = $this->historyRepository->storeHistoryPart($historyPart);
             foreach ($part['answers'] as $answer) {
                 $total_questions++;
@@ -284,7 +282,6 @@ class ExamService
                         $listening_questions++;
                     }
                 }
-                // dd($historyAnswer);
                 $this->historyRepository->storeHistoryAnswer($historyAnswer);
             }
         }
@@ -334,7 +331,6 @@ class ExamService
     {
         $partsArray = [];
         $part_collection = collect($history_part);
-        // dd($history_part);
         foreach ($parts as $part) {
             $answer_part = $part_collection->first(function ($a) use ($part) {
                 return $a['part_id'] === $part['id'];
@@ -384,7 +380,6 @@ class ExamService
         $questionsArray = [];
         $answer_collection = collect($answers);
         foreach ($questions as $question) {
-            // dd($answer_collection,$question);
             $answer = $answer_collection->first(function ($a) use ($question) {
                 return $a['question_id'] == $question['id'];
             });

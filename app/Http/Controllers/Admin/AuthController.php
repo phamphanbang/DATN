@@ -24,6 +24,13 @@ class AuthController extends Controller
         return response()->success($result, Response::HTTP_OK);
     }
 
+    public function adminLogin(LoginRequest $request)
+    {
+        $data = $request->only('email', 'password');
+        $result = $this->authService->adminLogin($data);
+        return response()->success($result, Response::HTTP_OK);
+    }
+
     public function logout(Request $request)
     {
         $user = $request->user();

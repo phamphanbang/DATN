@@ -15,9 +15,9 @@ class HomeService
     ) {
     }
 
-    public function index()
+    public function index($request)
     {
-        $data['exams'] = $this->examRepository->getExamForHomePage();
+        $data['exams'] = $this->examRepository->getExamForHomePage($request);
         $data['blogs'] =$this->blogRepository->getBlogForHomePage();
 
         return $data;

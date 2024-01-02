@@ -21,7 +21,6 @@ trait Searchable
             }
             $query = $query->orWhere($table . '.' . $column, 'LIKE', '%' . $term . '%');
         }
-        // dd($query->toSql());
         return $query;
     }
 

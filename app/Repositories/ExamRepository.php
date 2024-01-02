@@ -40,7 +40,6 @@ class ExamRepository
             $query = $query->where('type', $request['type']);
         }
         if (array_key_exists('user', $request) && $request['user']) {
-            // dd($request['user']);
             $user_id = $request['user'];
             $query = $query->withCount(['histories' => function ($q) use ($user_id) {
                 $q = $q->where('user_id',$user_id);
@@ -275,9 +274,15 @@ class ExamRepository
     //     return null;
     // }
 
-    public function getExamForHomePage()
+    public function getExamForHomePage($request)
     {
         $query = $this->exam;
+        if (array_key_exists('user', $request) && $request['user']) {
+            $user_id = $request['user'];
+            $query = $query->withCount(['histories' => function ($q) use ($user_id) {
+                $q = $q->where('user_id',$user_id);
+            }]);
+        }
         $limit = 8;
         $query = $query->with(['template'])->withCount(['comments']);
         $data = $query->where('status','active')->orderBy('created_at', 'DESC')->take($limit)->get();
